@@ -55,6 +55,11 @@ const Sidebar = () => {
                   </NavLink>
                 ))}
               </nav>
+              <div className='px-4 py-3 text-xs text-gray-400'>
+                <a href='https://logo.dev' title='Logo API' className='hover:text-gray-600'>
+                  Logos provided by Logo.dev
+                </a>
+              </div>
             </div>
           </div>
         </div>
