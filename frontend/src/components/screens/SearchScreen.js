@@ -156,7 +156,7 @@ function allPasswords({ hit }) {
         <li className='flex col-span-1 rounded-md shadow-sm'>
           <img
             alt='logo '
-            src={`https://logo.clearbit.com/${hit.url}`}
+            src={`https://img.logo.dev/${hit.url}?token=pk_H82lg8wdSsOq6I1XLEFkyg`}
             onError={(e) => {
               e.target.onerror = null;
               e.target.src =
