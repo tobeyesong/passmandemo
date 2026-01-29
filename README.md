@@ -1,39 +1,86 @@
-# PASSMAN DEMO
+# PassMan
 
+A full-stack password manager with instant search, auto-fetched company logos, and password strength analysis.
 
-# Portfolio Repository
----
+**[Live Demo →](https://passmandemo.herokuapp.com/)**
 
-## 1. Password Strength Meter
-
-Utilizes the `zxcvbn` library to gauge password strength. Users receive feedback labels: "UNSTEADY", "FEEBLE", "ACCEPTABLE", or "EXCEPTIONAL".  Additionally, a colored progress bar visually represents the strength score.
-
-- [View Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/misc/PasswordMeter.js)
----
-
-![alt text](https://i.imgur.com/MxFGAKb.png)
-
-## 2. Notes Management
-
-Enables users to create, view, and manage notes with a title, and caption. 
-
-- [View Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/screens/NoteScreen.js)
-
+![PassMan Screenshot](https://i.imgur.com/MxFGAKb.png)
 
 ---
 
-## 3. Passwords Management
+## Features
 
-Securely store and manage passwords. Each entry includes a URL, username, password, and optional notes. Automatically fetches associated website logos.
+### 🔐 Password Management
+Securely store credentials with URL, username, password, and notes. Company logos are automatically fetched via [Logo.dev](https://logo.dev) API for visual recognition.
 
-- [View Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/screens/PasswordScreen.js)
+### 📝 Notes Management
+Create and organize secure notes with titles and content — perfect for storing sensitive information that doesn't fit the password format.
+
+### ⚡ Algolia-Powered Search
+Instant, typo-tolerant search across all passwords and notes. Results appear as you type with sub-100ms response times.
+
+- [Search Implementation](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/screens/SearchScreen.js)
+
+### 💪 Password Strength Meter
+Real-time password analysis using [zxcvbn](https://github.com/dropbox/zxcvbn) — the same library used by Dropbox. Get feedback like "WEAK", "FAIR", or "STRONG" with a visual progress bar.
+
+- [Strength Meter Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/misc/PasswordMeter.js)
 
 ---
 
-## 4. Algolia Integration
+## Tech Stack
 
-Integrates with Algolia for efficient indexing and searching of notes and passwords.
+### Frontend
+- **React 17** with Redux state management
+- **Tailwind CSS** for styling
+- **Algolia InstantSearch** for real-time search UI
+- **React Router 6** for navigation
+- **React Final Form** for form handling
 
-- [View Code for Passwords](https://github.com/tobeyesong/passmandemo/blob/master/backend/controllers/passwordsControllers.js)
-- [View Code for Notes](https://github.com/tobeyesong/passmandemo/blob/master/backend/controllers/notesController.js)
-![image](https://github.com/tobeyesong/passmandemo/assets/65470881/b80ef2b0-9de8-438f-a13e-22fc017f47a0)
+### Backend
+- **Node.js / Express** REST API
+- **MongoDB / Mongoose** for data persistence
+- **JWT** authentication
+- **bcrypt** password hashing
+- **Algolia** search indexing
+
+### APIs
+- **[Logo.dev](https://logo.dev)** — Company logo fetching
+- **[Algolia](https://algolia.com)** — Search-as-a-service
+
+---
+
+## Screenshots
+
+### Password Strength Meter
+![Password Meter](https://i.imgur.com/MxFGAKb.png)
+
+### Algolia Search
+![Algolia Search](https://github.com/tobeyesong/passmandemo/assets/65470881/b80ef2b0-9de8-438f-a13e-22fc017f47a0)
+
+---
+
+## Local Development
+
+```bash
+# Clone the repo
+git clone https://github.com/tobeyesong/passmandemo.git
+cd passmandemo
+
+# Install dependencies
+npm install
+cd frontend && npm install && cd ..
+
+# Set up environment variables
+cp .env.example .env
+# Add your MongoDB URI, JWT secret, and Algolia credentials
+
+# Run development server
+npm run dev
+```
+
+---
+
+## License
+
+MIT
