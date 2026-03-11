@@ -7,6 +7,7 @@
 - Install frontend dependencies with `npm install --prefix frontend`.
 - Add backend env vars in `.env`:
   - `MONGO_URI` or `DB_USER` + `DB_PASS`
+- The backend defaults to port `5050` to avoid macOS using `5000`.
 - Run the app with `npm run dev`.
 - Run frontend verification with `npm run verify`.
 
