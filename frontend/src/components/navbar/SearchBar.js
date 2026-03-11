@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Fragment, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   HomeIcon,
   MenuAlt2Icon,
@@ -16,7 +16,7 @@ import { SearchIcon } from "@heroicons/react/solid";
 import Button from "../Button";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+  { name: "Dashboard", href: "/", icon: HomeIcon },
   {
     name: "Passwords",
     href: "/passwords",
@@ -32,6 +32,13 @@ function classNames(...classes) {
 
 const SearchBar = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  const isActive = (href) =>
+    href === "/"
+      ? pathname === "/" || pathname === "/dashboard"
+      : pathname.startsWith(href);
+
   return (
     <div className=''>
       <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -89,18 +96,19 @@ const SearchBar = () => {
               <div className='flex-1 h-0 mt-5 overflow-y-auto'>
                 <nav className='px-2 space-y-1'>
                   {navigation.map((item) => (
-                    <a
+                    <NavLink
                       key={item.name}
-                      href={item.href}
+                      to={item.href}
+                      onClick={() => setSidebarOpen(false)}
                       className={classNames(
-                        item.current
+                        isActive(item.href)
                           ? "bg-gray-100 text-gray-900"
                           : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
                         "group flex items-center px-2 py-2 text-base font-medium rounded-md"
                       )}>
                       <item.icon
                         className={classNames(
-                          item.current
+                          isActive(item.href)
                             ? "text-gray-500"
                             : "text-gray-400 group-hover:text-gray-500",
                           "mr-4 flex-shrink-0 h-6 w-6"
@@ -108,7 +116,7 @@ const SearchBar = () => {
                         aria-hidden='true'
                       />
                       {item.name}
-                    </a>
+                    </NavLink>
                   ))}
                 </nav>
               </div>

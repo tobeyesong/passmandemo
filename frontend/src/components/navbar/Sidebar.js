@@ -7,10 +7,10 @@ import {
   FingerPrintIcon,
   PaperClipIcon,
 } from "@heroicons/react/outline";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
+  { name: "Dashboard", href: "/", icon: HomeIcon },
   {
     name: "Passwords",
     href: "/passwords",
@@ -21,6 +21,13 @@ const navigation = [
 ];
 
 const Sidebar = () => {
+  const { pathname } = useLocation();
+
+  const isActive = (href) =>
+    href === "/"
+      ? pathname === "/" || pathname === "/dashboard"
+      : pathname.startsWith(href);
+
   return (
     <div className='flex h-screen overflow-hidden bg-gray-100'>
       {/* Static sidebar for desktop */}
@@ -42,8 +49,8 @@ const Sidebar = () => {
                   <NavLink
                     key={item.name}
                     to={item.href}
-                    className={({ isActive }) =>
-                      isActive
+                    className={() =>
+                      isActive(item.href)
                         ? "bg-yellow-400 flex items-center px-2 py-2 text-sm font-medium text-gray-600 rounded-md group hover:bg-yellow-100 hover:text-gray-900"
                         : "flex items-center px-2 py-2 text-sm font-medium text-gray-600 rounded-md group hover:bg-yellow-100 hover:text-gray-900"
                     }>
