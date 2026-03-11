@@ -52,13 +52,13 @@ const PasswordContent = (props) => {
                             <Link
                               to={`/note/${note._id}/edit`}
                               type='button'
-                              className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+                              className='card-action-button hover:border-slate-200/80 hover:from-slate-500/75 hover:to-slate-700/80 hover:text-white'>
                               <PencilIcon className='h-5 w-5' aria-hidden='true' />
                             </Link>
                             <Link
                               to={`/note/${note._id}/delete`}
                               type='button'
-                              className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+                              className='card-action-button hover:border-red-200/80 hover:from-red-400/80 hover:to-red-600/75 hover:text-white'>
                               <TrashIcon className='h-5 w-5' aria-hidden='true' />
                             </Link>
                           </div>
