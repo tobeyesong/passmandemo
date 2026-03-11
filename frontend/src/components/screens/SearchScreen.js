@@ -151,95 +151,76 @@ const SearchScreen = () => {
 
 function allPasswords({ hit }) {
   return (
-    <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6 group'>
-      <div className='border-r-4 rounded-md hover:border-yellow-400'>
-        <li className='flex col-span-1 rounded-md shadow-sm'>
-          <SiteLogo
-            url={hit.url}
-            className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-          />
-          <div className='flex flex-row-reverse items-center flex-1 truncate bg-white border-t border-b border-r border-gray-200 rounded-r-md'>
-            <div className='flex-1 px-4 py-2 text-sm truncate'>
-              <a
-                href={hit.href}
-                className='font-medium text-gray-900 hover:text-gray-600'>
-                {hit.username}
-              </a>
-              <p className='text-gray-500 '>{hit.url}</p>
-            </div>
-            <div className='absolute flex-shrink-0 m-2 transform scale-0 group-hover:scale-100 '>
-              <a
-                href={`https://${hit.url}`}
-                className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <ChevronDoubleUpIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-blue-700 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </a>
-              <Link
-                to={`/password/${hit.objectID}/edit`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <PencilIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-gray-800 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-              <Link
-                to={`/password/${hit.objectID}/delete`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <TrashIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-red-600 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-            </div>
+    <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6'>
+      <li className='group relative flex col-span-1 rounded-md border-r-4 border-transparent shadow-sm transition hover:border-yellow-400'>
+        <SiteLogo
+          url={hit.url}
+          className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
+        />
+        <div className='flex min-w-0 flex-1 flex-row-reverse items-center truncate rounded-r-md border border-gray-200 bg-white'>
+          <div className='flex-1 px-4 py-2 pr-12 text-sm truncate'>
+            <a
+              href={hit.href}
+              className='font-medium text-gray-900 hover:text-gray-600'>
+              {hit.username}
+            </a>
+            <p className='text-gray-500 '>{hit.url}</p>
           </div>
-        </li>
-      </div>
+        </div>
+        <div className='pointer-events-none absolute right-2 top-2 z-10 flex gap-1 opacity-0 translate-y-1 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0'>
+          <a
+            href={`https://${hit.url}`}
+            className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+            <ChevronDoubleUpIcon className='h-5 w-5' aria-hidden='true' />
+          </a>
+          <Link
+            to={`/password/${hit.objectID}/edit`}
+            type='button'
+            className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+            <PencilIcon className='h-5 w-5' aria-hidden='true' />
+          </Link>
+          <Link
+            to={`/password/${hit.objectID}/delete`}
+            type='button'
+            className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+            <TrashIcon className='h-5 w-5' aria-hidden='true' />
+          </Link>
+        </div>
+      </li>
     </ul>
   );
 }
 
 function allNotes({ hit }) {
   return (
-    <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6 group'>
-      <div className='border-r-4 rounded-md hover:border-yellow-400'>
-        <li className='flex col-span-1 border-4 rounded-md shadow-sm border-gray-50'>
-          <img
-            alt='logo'
-            src='https://media.publit.io/file/noun-triangle.svg'
-            className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-          />
-          <div className='flex flex-row-reverse items-center flex-1 truncate bg-white border-t border-b border-r border-blue-200 rounded-r-md'>
-            <div className='flex-1 px-4 py-2 text-sm truncate'>
-              {hit.title}
-              <p className='text-gray-500 truncate h-11 '>{hit.caption}</p>
-            </div>
-            <div className='absolute flex-shrink-0 m-2 transform scale-0 group-hover:scale-100 '>
-              <Link
-                to={`/note/${hit.objectID}/edit`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <PencilIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-gray-800 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-              <Link
-                to={`/note/${hit.objectID}/delete`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <TrashIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-red-600 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-            </div>
+    <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6'>
+      <li className='group relative flex col-span-1 rounded-md border-r-4 border-transparent shadow-sm transition hover:border-yellow-400'>
+        <img
+          alt='logo'
+          src='https://media.publit.io/file/noun-triangle.svg'
+          className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
+        />
+        <div className='flex min-w-0 flex-1 flex-row-reverse items-center truncate rounded-r-md border border-blue-200 bg-white'>
+          <div className='flex-1 px-4 py-2 pr-12 text-sm truncate'>
+            {hit.title}
+            <p className='text-gray-500 truncate h-11 '>{hit.caption}</p>
           </div>
-        </li>
-      </div>
+        </div>
+        <div className='pointer-events-none absolute right-2 top-2 z-10 flex gap-1 opacity-0 translate-y-1 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0'>
+          <Link
+            to={`/note/${hit.objectID}/edit`}
+            type='button'
+            className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+            <PencilIcon className='h-5 w-5' aria-hidden='true' />
+          </Link>
+          <Link
+            to={`/note/${hit.objectID}/delete`}
+            type='button'
+            className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm ring-1 ring-gray-200 transition hover:bg-red-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-yellow-400'>
+            <TrashIcon className='h-5 w-5' aria-hidden='true' />
+          </Link>
+        </div>
+      </li>
     </ul>
   );
 }
