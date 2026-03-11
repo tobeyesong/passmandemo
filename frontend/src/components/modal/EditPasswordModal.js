@@ -1,65 +1,53 @@
 /** @format */
 
-import React from "react";
-import { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { Form, Field } from "react-final-form";
+import { FORM_ERROR } from "final-form";
 import { Dialog, Transition } from "@headlessui/react";
-
 import { XCircleIcon, EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
-
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useParams, useNavigate, Link } from "react-router-dom";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import Loader from "../loader/Loader";
+import { getErrorMessage } from "../../lib/api";
 import {
-  listPasswordDetails,
-  updatePassword,
-} from "../../actions/passwordActions";
-import { PASSWORD_UPDATE_RESET } from "../../constants/passwordConstants";
+  usePasswordQuery,
+  useUpdatePasswordMutation,
+} from "../../hooks/usePasswords";
 
 const required = (value) => (value ? undefined : "Required");
 
 const EditPasswordModal = () => {
-  const dispatch = useDispatch();
-  const passwordId = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-
   const [open, setOpen] = useState(true);
-  const cancelButtonRef = useRef(null);
-
-  const passwordDetails = useSelector((state) => state.passwordDetails);
-  const { password } = passwordDetails;
-
-  const passwordUpdate = useSelector((state) => state.passwordUpdate);
-  const { success } = passwordUpdate;
-
-  useEffect(() => {
-    if (success) {
-      dispatch({ type: PASSWORD_UPDATE_RESET });
-      navigate("/passwords");
-    } else {
-      if (!password.name || password._id !== passwordId) {
-        dispatch(listPasswordDetails(passwordId.id));
-      } else {
-      }
-    }
-  }, [dispatch, passwordId, password, success, navigate]);
-  let formData = {
-    url: password.url,
-    username: password.username,
-    sitePassword: password.sitePassword,
-    notes: password.notes,
-  };
-  //TOGGLE PASSWORD VISION
   const [passwordShown, setPasswordShown] = useState(false);
+  const cancelButtonRef = useRef(null);
+  const { data: password, isLoading, error } = usePasswordQuery(id);
+  const updatePasswordMutation = useUpdatePasswordMutation();
+
   const togglePassword = () => {
-    setPasswordShown(!passwordShown);
+    setPasswordShown((current) => !current);
   };
 
   if (!open) {
     return <Navigate to='/' />;
   }
 
-  const onSubmit = (values) => {
-    dispatch(updatePassword({ _id: passwordId.id, values }));
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (error || !password) {
+    return <div className='p-6 text-red-600'>{error?.message || "Password not found"}</div>;
+  }
+
+  const onSubmit = async (values) => {
+    try {
+      await updatePasswordMutation.mutateAsync({ id, values });
+      navigate("/passwords");
+      return undefined;
+    } catch (mutationError) {
+      return { [FORM_ERROR]: getErrorMessage(mutationError) };
+    }
   };
 
   return (
@@ -85,7 +73,6 @@ const EditPasswordModal = () => {
                 <Dialog.Overlay className='fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 ' />
               </Transition.Child>
 
-              {/* This element is to trick the browser into centering the modal contents. */}
               <span
                 className='hidden sm:inline-block sm:align-middle sm:h-screen'
                 aria-hidden='true'>
@@ -99,7 +86,6 @@ const EditPasswordModal = () => {
                 leave='ease-in duration-200'
                 leaveFrom='opacity-100 translate-y-0 sm:scale-100'
                 leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                {/* This controls the actual width of modal based on responsive design */}
                 <div className='inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-100 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 lg:max-w-5xl'>
                   <div className='px-4 py-5 sm:p-6'>
                     <h3 className='p-2 space-y-8 text-lg font-medium leading-6 text-gray-800 bg-yellow-500 border-2 border-gray-300 divide-y divide-gray-200 shadow-lg rounded-t-md sm:space-y-5'>
@@ -108,9 +94,13 @@ const EditPasswordModal = () => {
                     <hr />
 
                     <Form
+                      key={password._id}
                       onSubmit={onSubmit}
                       initialValues={{
-                        ...formData,
+                        url: password.url,
+                        username: password.username,
+                        sitePassword: password.sitePassword,
+                        notes: password.notes,
                       }}
                       render={({ handleSubmit, submitError }) => (
                         <form onSubmit={handleSubmit}>
@@ -205,7 +195,7 @@ const EditPasswordModal = () => {
                                 <Field
                                   name='sitePassword'
                                   component='input'
-                                  placeholder='password.sitePassword'
+                                  placeholder='Enter Password'
                                   validate={required}>
                                   {({ input, meta, placeholder }) => (
                                     <div className='col-span-6 sm:col-span-3'>
@@ -301,8 +291,11 @@ const EditPasswordModal = () => {
                                 </Link>
                                 <button
                                   type='submit'
-                                  className='inline-flex justify-center px-4 py-2 ml-3 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                                  Update
+                                  disabled={updatePasswordMutation.isPending}
+                                  className='inline-flex justify-center px-4 py-2 ml-3 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                                  {updatePasswordMutation.isPending
+                                    ? "Updating..."
+                                    : "Update"}
                                 </button>
                               </div>
                             </div>

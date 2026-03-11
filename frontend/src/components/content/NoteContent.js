@@ -1,25 +1,14 @@
 /** @format */
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import { TrashIcon, PencilIcon } from "@heroicons/react/outline";
 import Loader from "../loader/Loader";
-import { listNotes } from "../../actions/noteActions";
-
 import NoteState from "../emptyState/noteState";
-
-//Toastify
-import { ToastContainer } from "react-toastify";
+import { useNotesQuery } from "../../hooks/useNotes";
 
 const PasswordContent = (props) => {
-  const dispatch = useDispatch();
-  const noteList = useSelector((state) => state.noteList);
-  const { loading, error, notes } = noteList;
-
-  useEffect(() => {
-    dispatch(listNotes());
-  }, [dispatch]);
+  const { data: notes = [], isLoading, error } = useNotesQuery();
 
   return (
     <div>
@@ -27,15 +16,14 @@ const PasswordContent = (props) => {
         <div className='py-6'>
           <div className='px-4 mx-auto max-w-7xl sm:px-6 md:px-8'>
             <div>
-              <ToastContainer autoClose={2000} />
               <h1 className='text-2xl font-semibold text-gray-900'>
                 {props.title}
               </h1>
               <Fragment>
-                {loading ? (
+                {isLoading ? (
                   <Loader />
                 ) : error ? (
-                  <h3 className='animate-pulse'>{error}</h3>
+                  <h3 className='animate-pulse'>{error.message}</h3>
                 ) : notes.length === 0 ? (
                   <NoteState />
                 ) : (

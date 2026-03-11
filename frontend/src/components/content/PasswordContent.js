@@ -1,29 +1,22 @@
 /** @format */
 
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import {
   TrashIcon,
   PencilIcon,
   ChevronDoubleUpIcon,
 } from "@heroicons/react/outline";
 import Loader from "../loader/Loader";
-import { listPasswords } from "../../actions/passwordActions";
-
 import PasswordState from "../emptyState/passwordState";
-
-//Toastify
-import { ToastContainer } from "react-toastify";
+import { usePasswordsQuery } from "../../hooks/usePasswords";
 
 const PasswordContent = (props) => {
-  const dispatch = useDispatch();
-  const passwordList = useSelector((state) => state.passwordList);
-  const { loading, error, passwords } = passwordList;
-
-  useEffect(() => {
-    dispatch(listPasswords());
-  }, [dispatch]);
+  const {
+    data: passwords = [],
+    isLoading,
+    error,
+  } = usePasswordsQuery();
 
   return (
     <div>
@@ -31,15 +24,14 @@ const PasswordContent = (props) => {
         <div className='py-6'>
           <div className='px-4 mx-auto max-w-7xl sm:px-6 md:px-8'>
             <div>
-              <ToastContainer autoClose={2000} />
               <h1 className='text-2xl font-semibold text-gray-900'>
                 {props.title}
               </h1>
               <Fragment>
-                {loading ? (
+                {isLoading ? (
                   <Loader />
                 ) : error ? (
-                  <h3 className='animate-pulse'>{error}</h3>
+                  <h3 className='animate-pulse'>{error.message}</h3>
                 ) : passwords.length === 0 ? (
                   <PasswordState />
                 ) : (

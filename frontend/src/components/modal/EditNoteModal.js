@@ -1,60 +1,45 @@
 /** @format */
 
-import React from "react";
-import { Fragment, useState, useEffect, useRef } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { Form, Field } from "react-final-form";
+import { FORM_ERROR } from "final-form";
 import { Dialog, Transition } from "@headlessui/react";
-
 import { XCircleIcon } from "@heroicons/react/solid";
-
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, useParams, useNavigate, Link } from "react-router-dom";
-import { listNoteDetails, updateNote } from "../../actions/noteActions";
-import { NOTE_UPDATE_RESET } from "../../constants/noteConstants";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import Loader from "../loader/Loader";
+import { getErrorMessage } from "../../lib/api";
+import { useNoteQuery, useUpdateNoteMutation } from "../../hooks/useNotes";
 
 const required = (value) => (value ? undefined : "Required");
 
 const EditNoteModal = () => {
-  const dispatch = useDispatch();
-  const noteId = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-
-  // const [setTitle] = useState("");
-  // const [setImage] = useState("");
-  // const [setCaption] = useState("");
-
   const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
-
-  const noteDetails = useSelector((state) => state.noteDetails);
-  const { note } = noteDetails;
-
-  const noteUpdate = useSelector((state) => state.noteUpdate);
-  const { success } = noteUpdate;
-
-  useEffect(() => {
-    if (success) {
-      dispatch({ type: NOTE_UPDATE_RESET });
-      navigate("/notes");
-    } else {
-      if (!note.name || note._id !== noteId) {
-        dispatch(listNoteDetails(noteId.id));
-      } else {
-      }
-    }
-  }, [dispatch, noteId, note, success, navigate]);
-  let formData = {
-    title: note.title,
-    caption: note.caption,
-    image: note.image,
-  };
+  const { data: note, isLoading, error } = useNoteQuery(id);
+  const updateNoteMutation = useUpdateNoteMutation();
 
   if (!open) {
     return <Navigate to='/' />;
   }
 
-  const onSubmit = (values) => {
-    dispatch(updateNote({ _id: noteId.id, values }));
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (error || !note) {
+    return <div className='p-6 text-red-600'>{error?.message || "Note not found"}</div>;
+  }
+
+  const onSubmit = async (values) => {
+    try {
+      await updateNoteMutation.mutateAsync({ id, values });
+      navigate("/notes");
+      return undefined;
+    } catch (mutationError) {
+      return { [FORM_ERROR]: getErrorMessage(mutationError) };
+    }
   };
 
   return (
@@ -80,7 +65,6 @@ const EditNoteModal = () => {
                 <Dialog.Overlay className='fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 ' />
               </Transition.Child>
 
-              {/* This element is to trick the browser into centering the modal contents. */}
               <span
                 className='hidden sm:inline-block sm:align-middle sm:h-screen'
                 aria-hidden='true'>
@@ -94,18 +78,20 @@ const EditNoteModal = () => {
                 leave='ease-in duration-200'
                 leaveFrom='opacity-100 translate-y-0 sm:scale-100'
                 leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                {/* This controls the actual width of modal based on responsive design */}
                 <div className='inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-100 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 lg:max-w-5xl'>
                   <div className='px-4 py-5 sm:p-6'>
                     <h3 className='p-2 space-y-8 text-lg font-medium leading-6 text-gray-800 bg-yellow-500 border-2 border-gray-300 divide-y divide-gray-200 shadow-lg rounded-t-md sm:space-y-5'>
-                      Edit Password
+                      Edit Note
                     </h3>
                     <hr />
 
                     <Form
+                      key={note._id}
                       onSubmit={onSubmit}
                       initialValues={{
-                        ...formData,
+                        title: note.title,
+                        caption: note.caption,
+                        image: note.image,
                       }}
                       render={({ handleSubmit, submitError }) => (
                         <form onSubmit={handleSubmit}>
@@ -164,6 +150,23 @@ const EditNoteModal = () => {
                                   />
                                 </div>
                               </div>
+                              {submitError && (
+                                <div className='p-1 mb-4 transition duration-500 ease-in-out rounded-md bg-red-50'>
+                                  <div className='flex'>
+                                    <div className='flex-shrink-0'>
+                                      <XCircleIcon
+                                        className='w-5 h-5 text-red-400'
+                                        aria-hidden='true'
+                                      />
+                                    </div>
+                                    <div className='ml-3'>
+                                      <h3 className='text-sm font-medium text-red-800'>
+                                        {submitError}
+                                      </h3>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
                               <hr />
                               <div className='flex justify-end pt-5'>
                                 <Link
@@ -174,8 +177,11 @@ const EditNoteModal = () => {
                                 </Link>
                                 <button
                                   type='submit'
-                                  className='inline-flex justify-center px-4 py-2 ml-3 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                                  Save
+                                  disabled={updateNoteMutation.isPending}
+                                  className='inline-flex justify-center px-4 py-2 ml-3 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                                  {updateNoteMutation.isPending
+                                    ? "Saving..."
+                                    : "Save"}
                                 </button>
                               </div>
                             </div>

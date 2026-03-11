@@ -1,66 +1,42 @@
 /** @format */
-import React from "react";
-import { Fragment, useState, useRef, useEffect } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
 
-//Redux
-import { useDispatch, useSelector } from "react-redux";
-import { createPassword } from "../../actions/passwordActions";
-import { PASSWORD_CREATE_RESET } from "../../constants/passwordConstants";
-
-//Final Form
+import React, { Fragment, useRef, useState } from "react";
 import { Form, Field } from "react-final-form";
+import { FORM_ERROR } from "final-form";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { XCircleIcon, EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
 import { OnChange } from "../forms/OnChange";
 import PasswordMeter from "../misc/PasswordMeter";
+import { getErrorMessage } from "../../lib/api";
+import { useCreatePasswordMutation } from "../../hooks/usePasswords";
 
 const required = (value) => (value ? undefined : "Required");
 
 const AddPasswordModal = () => {
-  const dispatch = useDispatch();
-  const passwordId = useParams();
   const navigate = useNavigate();
   const [target, setTarget] = useState("");
   const [open, setOpen] = useState(true);
-  const cancelButtonRef = useRef(null);
-
-  const passwordCreate = useSelector((state) => state.passwordCreate);
-  const {
-    // loading: loadingCreate,
-    // error: errorCreate,
-    success: successCreate,
-    password: createdPassword,
-  } = passwordCreate;
-  const passwordDetails = useSelector((state) => state.passwordDetails);
-  const { password } = passwordDetails;
-
-  useEffect(() => {
-    dispatch({ type: PASSWORD_CREATE_RESET });
-    if (successCreate) {
-      navigate("/dashboard");
-    }
-  }, [
-    dispatch,
-    passwordId,
-    password,
-    successCreate,
-    navigate,
-    createdPassword,
-  ]);
-
-  //TOGGLE PASSWORD VISION
   const [passwordShown, setPasswordShown] = useState(false);
+  const cancelButtonRef = useRef(null);
+  const createPasswordMutation = useCreatePasswordMutation();
+
   const togglePassword = () => {
-    setPasswordShown(!passwordShown);
+    setPasswordShown((current) => !current);
   };
 
   if (!open) {
-    navigate("/");
+    return <Navigate to='/' />;
   }
 
-  const onSubmit = (values) => {
-    dispatch(createPassword(values));
+  const onSubmit = async (values) => {
+    try {
+      await createPasswordMutation.mutateAsync(values);
+      navigate("/dashboard");
+      return undefined;
+    } catch (error) {
+      return { [FORM_ERROR]: getErrorMessage(error) };
+    }
   };
 
   return (
@@ -86,7 +62,6 @@ const AddPasswordModal = () => {
                 <Dialog.Overlay className='fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 ' />
               </Transition.Child>
 
-              {/* This element is to trick the browser into centering the modal contents. */}
               <span
                 className='hidden sm:inline-block sm:align-middle sm:h-screen'
                 aria-hidden='true'>
@@ -100,7 +75,6 @@ const AddPasswordModal = () => {
                 leave='ease-in duration-200'
                 leaveFrom='opacity-100 translate-y-0 sm:scale-100'
                 leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                {/* This controls the actual width of modal based on responsive design */}
                 <div className='inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-100 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 lg:max-w-5xl'>
                   <div className='px-4 py-5 sm:p-6'>
                     <h3 className='p-2 space-y-8 text-lg font-medium leading-6 text-gray-800 bg-yellow-500 divide-y divide-gray-200 shadow-lg bg-yellow-500border-2 rounded-t-md sm:space-y-5'>
@@ -110,7 +84,7 @@ const AddPasswordModal = () => {
 
                     <Form
                       onSubmit={onSubmit}
-                      render={({ handleSubmit, submitError, values }) => (
+                      render={({ handleSubmit, submitError }) => (
                         <form onSubmit={handleSubmit}>
                           <div className='p-4 space-y-8 bg-white border-2 border-gray-100 divide-y divide-gray-200 shadow-lg rounded-b-md sm:space-y-5'>
                             <div>
@@ -265,7 +239,7 @@ const AddPasswordModal = () => {
                                 </Field>
                                 <OnChange
                                   name='sitePassword'
-                                  onChange={(val, preval) => setTarget(val)}
+                                  onChange={(value) => setTarget(value)}
                                 />
                                 {submitError && (
                                   <div className='p-1 mt-1 mb-2 transition duration-500 ease-in-out rounded-md bg-red-50'>
@@ -304,8 +278,11 @@ const AddPasswordModal = () => {
 
                                 <button
                                   type='submit'
-                                  className='inline-flex justify-center px-4 py-2 ml-3 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-                                  Create
+                                  disabled={createPasswordMutation.isPending}
+                                  className='inline-flex justify-center px-4 py-2 ml-3 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                                  {createPasswordMutation.isPending
+                                    ? "Creating..."
+                                    : "Create"}
                                 </button>
                               </div>
                             </div>

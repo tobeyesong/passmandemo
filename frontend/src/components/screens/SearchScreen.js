@@ -1,9 +1,8 @@
 /** @format */
 /** @format */
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
 import Sidebar from "../navbar/Sidebar";
 import Loader from "../Loader";
 
@@ -15,8 +14,9 @@ import {
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
-import axios from "axios";
 import Title from "../misc/Title";
+import { useNotesQuery } from "../../hooks/useNotes";
+import { usePasswordsQuery } from "../../hooks/usePasswords";
 
 const searchClient = algoliasearch(
   "BC38Z1AKHU",
@@ -26,36 +26,35 @@ const passwordIndex = searchClient.initIndex("passwordDemo");
 const noteIndex = searchClient.initIndex("noteDemo");
 
 const SearchScreen = () => {
-  const [passwords, setPasswords] = useState([]);
-  const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const {
+    data: passwordResults = [],
+    isLoading: passwordsLoading,
+    error: passwordsError,
+  } = usePasswordsQuery();
+  const {
+    data: noteResults = [],
+    isLoading: notesLoading,
+    error: notesError,
+  } = useNotesQuery();
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchData = async () => {
-      try {
-        const [passwordResponse, noteResponse] = await Promise.all([
-          axios.get("/api/passwords"),
-          axios.get("/api/notes"),
-        ]);
-        const passwordData = passwordResponse.data.map((password) => {
-          return { ...password, objectID: password._id };
-        });
-        const noteData = noteResponse.data.map((note) => {
-          return { ...note, objectID: note._id };
-        });
-        setPasswords(passwordData);
-        setNotes(noteData);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching data: ", err);
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const passwords = useMemo(
+    () =>
+      passwordResults.map((password) => ({
+        ...password,
+        objectID: password._id,
+      })),
+    [passwordResults]
+  );
+  const notes = useMemo(
+    () =>
+      noteResults.map((note) => ({
+        ...note,
+        objectID: note._id,
+      })),
+    [noteResults]
+  );
+  const loading = passwordsLoading || notesLoading;
+  const error = passwordsError || notesError;
 
   useEffect(() => {
     if (passwords.length > 0) {
@@ -103,7 +102,7 @@ const SearchScreen = () => {
         </div>
       </main>
     );
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <div className='relative flex flex-1 h-screen overflow-hidden bg-gray-100'>

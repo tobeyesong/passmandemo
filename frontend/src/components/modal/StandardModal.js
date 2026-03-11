@@ -12,7 +12,7 @@ export default function Modal(props) {
   const cancelButtonRef = useRef(null);
 
   if (!open) {
-    return <Navigate t to='/' />;
+    return <Navigate to='/' />;
   }
 
   return (
