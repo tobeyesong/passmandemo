@@ -54,9 +54,7 @@ const createNote = asyncHandler(async (req, res) => {
 // @route   PUT /api/note/:id
 // @access  Private/Admin
 const updateNote = asyncHandler(async (req, res) => {
-  const {
-    values: { title, caption, image },
-  } = req.body;
+  const { title, caption, image } = req.body.values || req.body;
 
   const note = await Note.findById(req.params.id);
   if (note) {
@@ -91,7 +89,7 @@ const updateNote = asyncHandler(async (req, res) => {
 const deleteNote = asyncHandler(async (req, res) => {
   const note = await Note.findById(req.params.id);
   if (note) {
-    await note.remove();
+    await note.deleteOne();
 
     // Delete the corresponding index from Algolia
     try {

@@ -54,9 +54,7 @@ const createPassword = asyncHandler(async (req, res) => {
 // @route   PUT /api/password/:id
 // @access  Private/Admin
 const updatePassword = asyncHandler(async (req, res) => {
-  const {
-    values: { url, username, sitePassword, notes },
-  } = req.body;
+  const { url, username, sitePassword, notes } = req.body.values || req.body;
 
   const password = await Password.findById(req.params.id);
   if (password) {
@@ -88,7 +86,7 @@ const updatePassword = asyncHandler(async (req, res) => {
 const deletePassword = asyncHandler(async (req, res) => {
   const password = await Password.findById(req.params.id);
   if (password) {
-    await password.remove();
+    await password.deleteOne();
 
     // Delete the corresponding index from Algolia
     try {

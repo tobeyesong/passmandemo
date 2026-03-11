@@ -1,5 +1,15 @@
 # PASSMAN DEMO
 
+## Local Setup
+
+- Use Node `20.19.0` and npm `10.8.x`. The repo now includes `.nvmrc`.
+- Install root dependencies with `npm install`.
+- Install frontend dependencies with `npm install --prefix frontend`.
+- Add backend env vars in `.env`:
+  - `MONGO_URI` or `DB_USER` + `DB_PASS`
+- Run the app with `npm run dev`.
+- Run frontend verification with `npm run verify`.
+
 
 # Portfolio Repository
 ---
