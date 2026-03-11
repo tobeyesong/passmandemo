@@ -170,19 +170,19 @@ function allPasswords({ hit }) {
         <div className='pointer-events-none absolute right-2 top-2 z-10 flex gap-1 opacity-0 translate-y-1 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0'>
           <a
             href={`https://${hit.url}`}
-            className='card-action-button glass hover:border-sky-200/80 hover:from-sky-300/80 hover:to-blue-500/65 hover:text-white'>
+            className='card-action-button glass hover:border-sky-200/45 hover:bg-sky-500/70 hover:text-white'>
             <ChevronDoubleUpIcon className='h-5 w-5' aria-hidden='true' />
           </a>
           <Link
             to={`/password/${hit.objectID}/edit`}
             type='button'
-            className='card-action-button glass hover:border-slate-200/80 hover:from-slate-500/75 hover:to-slate-700/80 hover:text-white'>
+            className='card-action-button glass hover:border-slate-200/45 hover:bg-slate-600/70 hover:text-white'>
             <PencilIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
           <Link
             to={`/password/${hit.objectID}/delete`}
             type='button'
-            className='card-action-button glass hover:border-red-200/80 hover:from-red-400/80 hover:to-red-600/75 hover:text-white'>
+            className='card-action-button glass hover:border-red-200/45 hover:bg-red-500/75 hover:text-white'>
             <TrashIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
         </div>
@@ -210,13 +210,13 @@ function allNotes({ hit }) {
           <Link
             to={`/note/${hit.objectID}/edit`}
             type='button'
-            className='card-action-button glass hover:border-slate-200/80 hover:from-slate-500/75 hover:to-slate-700/80 hover:text-white'>
+            className='card-action-button glass hover:border-slate-200/45 hover:bg-slate-600/70 hover:text-white'>
             <PencilIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
           <Link
             to={`/note/${hit.objectID}/delete`}
             type='button'
-            className='card-action-button glass hover:border-red-200/80 hover:from-red-400/80 hover:to-red-600/75 hover:text-white'>
+            className='card-action-button glass hover:border-red-200/45 hover:bg-red-500/75 hover:text-white'>
             <TrashIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
         </div>
