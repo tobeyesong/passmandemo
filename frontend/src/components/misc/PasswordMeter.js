@@ -10,7 +10,6 @@ function classNames(...classes) {
 const PasswordMeter = ({ target }) => {
   const testResult = zxcvbn(target);
   const num = (testResult.score * 100) / 4;
-  console.log(num);
 
   const createPassLabel = () => {
     switch (testResult.score) {
