@@ -10,6 +10,7 @@ import {
 import Loader from "../loader/Loader";
 import PasswordState from "../emptyState/passwordState";
 import { usePasswordsQuery } from "../../hooks/usePasswords";
+import SiteLogo from "../misc/SiteLogo";
 
 const PasswordContent = (props) => {
   const {
@@ -41,14 +42,8 @@ const PasswordContent = (props) => {
                         <div key={password._id}>
                           <div className='border-r-4 rounded-md hover:border-yellow-400'>
                             <li className='flex col-span-1 rounded-md shadow-sm'>
-                              <img
-                                alt='logo '
-                                src={`https://logo.clearbit.com/${password.url}`}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src =
-                                    "https://media.publit.io/file/MiscPasswordIcon.svg";
-                                }}
+                              <SiteLogo
+                                url={password.url}
                                 className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
                               />
 

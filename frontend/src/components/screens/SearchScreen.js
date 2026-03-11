@@ -15,6 +15,7 @@ import {
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
 import Title from "../misc/Title";
+import SiteLogo from "../misc/SiteLogo";
 import { useNotesQuery } from "../../hooks/useNotes";
 import { usePasswordsQuery } from "../../hooks/usePasswords";
 
@@ -153,14 +154,8 @@ function allPasswords({ hit }) {
     <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6 group'>
       <div className='border-r-4 rounded-md hover:border-yellow-400'>
         <li className='flex col-span-1 rounded-md shadow-sm'>
-          <img
-            alt='logo '
-            src={`https://logo.clearbit.com/${hit.url}`}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src =
-                "https://media.publit.io/file/MiscPasswordIcon.svg";
-            }}
+          <SiteLogo
+            url={hit.url}
             className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
           />
           <div className='flex flex-row-reverse items-center flex-1 truncate bg-white border-t border-b border-r border-gray-200 rounded-r-md'>
