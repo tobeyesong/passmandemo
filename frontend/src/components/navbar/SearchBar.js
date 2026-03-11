@@ -30,7 +30,10 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const SearchBar = () => {
+const SearchBar = ({
+  isSidebarVisible = true,
+  onSidebarToggle = () => {},
+}) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
 
@@ -134,6 +137,19 @@ const SearchBar = () => {
           onClick={() => setSidebarOpen(true)}>
           <span className='sr-only'>Open sidebar</span>
           <MenuAlt2Icon className='w-6 h-6' aria-hidden='true' />
+        </button>
+        <button
+          type='button'
+          className='items-center hidden px-4 text-gray-500 border-r border-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:inline-flex'
+          onClick={onSidebarToggle}>
+          <span className='sr-only'>
+            {isSidebarVisible ? "Hide sidebar" : "Show sidebar"}
+          </span>
+          {isSidebarVisible ? (
+            <XIcon className='w-6 h-6' aria-hidden='true' />
+          ) : (
+            <MenuAlt2Icon className='w-6 h-6' aria-hidden='true' />
+          )}
         </button>
         <div className='flex justify-between flex-1 px-4'>
           <div className='flex items-center flex-1'>

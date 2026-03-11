@@ -1,13 +1,14 @@
 /** @format */
 
 import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { TrashIcon, PencilIcon } from "@heroicons/react/outline";
 import Loader from "../loader/Loader";
 import NoteState from "../emptyState/noteState";
 import { useNotesQuery } from "../../hooks/useNotes";
 
 const PasswordContent = (props) => {
+  const location = useLocation();
   const { data: notes = [], isLoading, error } = useNotesQuery();
 
   return (
@@ -51,12 +52,14 @@ const PasswordContent = (props) => {
                           <div className='pointer-events-none absolute right-2 top-2 z-10 flex gap-1 opacity-0 translate-y-1 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0'>
                             <Link
                               to={`/note/${note._id}/edit`}
+                              state={{ backgroundLocation: location }}
                               type='button'
                               className='card-action-button glass hover:border-slate-200/45 hover:bg-slate-600/70 hover:text-white'>
                               <PencilIcon className='h-5 w-5' aria-hidden='true' />
                             </Link>
                             <Link
                               to={`/note/${note._id}/delete`}
+                              state={{ backgroundLocation: location }}
                               type='button'
                               className='card-action-button glass hover:border-red-200/45 hover:bg-red-500/75 hover:text-white'>
                               <TrashIcon className='h-5 w-5' aria-hidden='true' />

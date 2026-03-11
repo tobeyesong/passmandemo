@@ -5,7 +5,7 @@ import { Form, Field } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { XCircleIcon, EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../loader/Loader";
 import { getErrorMessage } from "../../lib/api";
 import {
@@ -17,20 +17,18 @@ const required = (value) => (value ? undefined : "Required");
 
 const EditPasswordModal = () => {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
   const [passwordShown, setPasswordShown] = useState(false);
   const cancelButtonRef = useRef(null);
   const { data: password, isLoading, error } = usePasswordQuery(id);
   const updatePasswordMutation = useUpdatePasswordMutation();
+  const closeTo = location.state?.backgroundLocation?.pathname || "/passwords";
+  const handleClose = () => navigate(closeTo);
 
   const togglePassword = () => {
     setPasswordShown((current) => !current);
   };
-
-  if (!open) {
-    return <Navigate to='/' />;
-  }
 
   if (isLoading) {
     return <Loader />;
@@ -43,7 +41,7 @@ const EditPasswordModal = () => {
   const onSubmit = async (values) => {
     try {
       await updatePasswordMutation.mutateAsync({ id, values });
-      navigate("/passwords");
+      navigate(closeTo);
       return undefined;
     } catch (mutationError) {
       return { [FORM_ERROR]: getErrorMessage(mutationError) };
@@ -52,14 +50,13 @@ const EditPasswordModal = () => {
 
   return (
     <Fragment>
-      <Transition.Root show={open} as={Fragment}>
+      <Transition.Root show as={Fragment}>
         <Dialog
           as='div'
-          static
-          className='fixed inset-0 z-10 overflow-y-auto'
+          className='fixed inset-0 z-50 overflow-y-auto'
           initialFocus={cancelButtonRef}
-          open={open}
-          onClose={setOpen}>
+          open
+          onClose={handleClose}>
           <div className='flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0'>
             <div className='flex-auto'>
               <Transition.Child
@@ -283,12 +280,12 @@ const EditPasswordModal = () => {
                             </div>
                             <div className='pt-5'>
                               <div className='flex justify-end'>
-                                <Link
-                                  to='/passwords'
+                                <button
                                   type='button'
                                   className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                                  onClick={handleClose}
                                   Cancel
-                                </Link>
+                                </button>
                                 <button
                                   type='submit'
                                   disabled={updatePasswordMutation.isPending}

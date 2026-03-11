@@ -1,8 +1,8 @@
 /** @format */
 /** @format */
 
-import React, { useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../navbar/Sidebar";
 import Loader from "../Loader";
 
@@ -11,6 +11,8 @@ import {
   PencilIcon,
   ChevronDoubleUpIcon,
   ArrowNarrowLeftIcon,
+  MenuAlt2Icon,
+  XIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
@@ -27,6 +29,8 @@ const passwordIndex = searchClient.initIndex("passwordDemo");
 const noteIndex = searchClient.initIndex("noteDemo");
 
 const SearchScreen = () => {
+  const location = useLocation();
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
   const {
     data: passwordResults = [],
     isLoading: passwordsLoading,
@@ -107,12 +111,25 @@ const SearchScreen = () => {
 
   return (
     <div className='relative flex flex-1 h-screen overflow-hidden bg-gray-100'>
-      <Sidebar />
+      <Sidebar isVisible={isSidebarVisible} />
       <div className='flex flex-col flex-1 w-0 overflow-auto'>
         <InstantSearch indexName='passwordDemo' searchClient={searchClient}>
           <div className='app'>
             <div className=''>
               <div className='flex'>
+                <button
+                  type='button'
+                  className='items-center hidden px-4 text-gray-500 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg focus:shadow-inner focus:outline-none md:inline-flex'
+                  onClick={() => setSidebarVisible((current) => !current)}>
+                  <span className='sr-only'>
+                    {isSidebarVisible ? "Hide sidebar" : "Show sidebar"}
+                  </span>
+                  {isSidebarVisible ? (
+                    <XIcon className='w-6 h-6' aria-hidden='true' />
+                  ) : (
+                    <MenuAlt2Icon className='w-6 h-6' aria-hidden='true' />
+                  )}
+                </button>
                 <Link
                   to='/'
                   className='inline-flex items-center px-4 text-gray-500 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg focus:shadow-inner rounded-l-md focus:outline-none md:hidden'>
@@ -133,11 +150,25 @@ const SearchScreen = () => {
                 <div className='max-w-5xl mx-auto'>
                   <Title title='Passwords' />
                   <Index indexName='passwordDemo'>
-                    <Hits hitComponent={allPasswords} />
+                    <Hits
+                      hitComponent={(props) => (
+                        <AllPasswords
+                          {...props}
+                          backgroundLocation={location}
+                        />
+                      )}
+                    />
                   </Index>
                   <Title title='Notes' />
                   <Index indexName='noteDemo'>
-                    <Hits hitComponent={allNotes} />
+                    <Hits
+                      hitComponent={(props) => (
+                        <AllNotes
+                          {...props}
+                          backgroundLocation={location}
+                        />
+                      )}
+                    />
                   </Index>
                 </div>
               </div>
@@ -149,7 +180,7 @@ const SearchScreen = () => {
   );
 };
 
-function allPasswords({ hit }) {
+function AllPasswords({ hit, backgroundLocation }) {
   return (
     <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6'>
       <li className='group relative flex col-span-1 rounded-md border-r-4 border-transparent shadow-sm transition hover:border-yellow-400'>
@@ -175,12 +206,14 @@ function allPasswords({ hit }) {
           </a>
           <Link
             to={`/password/${hit.objectID}/edit`}
+            state={{ backgroundLocation }}
             type='button'
             className='card-action-button glass hover:border-slate-200/45 hover:bg-slate-600/70 hover:text-white'>
             <PencilIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
           <Link
             to={`/password/${hit.objectID}/delete`}
+            state={{ backgroundLocation }}
             type='button'
             className='card-action-button glass hover:border-red-200/45 hover:bg-red-500/75 hover:text-white'>
             <TrashIcon className='h-5 w-5' aria-hidden='true' />
@@ -191,7 +224,7 @@ function allPasswords({ hit }) {
   );
 }
 
-function allNotes({ hit }) {
+function AllNotes({ hit, backgroundLocation }) {
   return (
     <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6'>
       <li className='group relative flex col-span-1 rounded-md border-r-4 border-transparent shadow-sm transition hover:border-yellow-400'>
@@ -209,12 +242,14 @@ function allNotes({ hit }) {
         <div className='pointer-events-none absolute right-2 top-2 z-10 flex gap-1 opacity-0 translate-y-1 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0'>
           <Link
             to={`/note/${hit.objectID}/edit`}
+            state={{ backgroundLocation }}
             type='button'
             className='card-action-button glass hover:border-slate-200/45 hover:bg-slate-600/70 hover:text-white'>
             <PencilIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
           <Link
             to={`/note/${hit.objectID}/delete`}
+            state={{ backgroundLocation }}
             type='button'
             className='card-action-button glass hover:border-red-200/45 hover:bg-red-500/75 hover:text-white'>
             <TrashIcon className='h-5 w-5' aria-hidden='true' />

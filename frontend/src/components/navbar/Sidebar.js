@@ -20,7 +20,7 @@ const navigation = [
   // { name: "Addresses", href: "/addresses", icon: MapIcon },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isVisible = true }) => {
   const { pathname } = useLocation();
 
   const isActive = (href) =>
@@ -31,7 +31,7 @@ const Sidebar = () => {
   return (
     <div className='flex h-screen overflow-hidden bg-gray-100'>
       {/* Static sidebar for desktop */}
-      <div className='hidden md:flex md:flex-shrink-0'>
+      <div className={isVisible ? "hidden md:flex md:flex-shrink-0" : "hidden"}>
         <div className='flex flex-col w-64'>
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className='flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-white border-r border-gray-200'>

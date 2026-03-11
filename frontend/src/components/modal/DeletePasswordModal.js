@@ -1,24 +1,21 @@
 /** @format */
 
-import React, { useRef, useState } from "react";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import React from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import StandardModal from "./StandardModal";
 import { useDeletePasswordMutation } from "../../hooks/usePasswords";
 
 const DeletePasswordModal = () => {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
-  const cancelButtonRef = useRef(null);
   const deletePasswordMutation = useDeletePasswordMutation();
-
-  if (!open) {
-    return <Navigate to='/' />;
-  }
+  const closeTo = location.state?.backgroundLocation?.pathname || "/passwords";
+  const handleClose = () => navigate(closeTo);
 
   const deleteHandler = async () => {
     await deletePasswordMutation.mutateAsync(id);
-    navigate("/");
+    navigate(closeTo);
   };
 
   const actions = (
@@ -30,20 +27,19 @@ const DeletePasswordModal = () => {
         onClick={deleteHandler}>
         {deletePasswordMutation.isPending ? "Deleting..." : "Delete"}
       </button>
-      <Link
-        to='/passwords'
+      <button
         type='button'
         className='inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm'
-        onClick={() => setOpen(false)}
-        ref={cancelButtonRef}>
+        onClick={handleClose}>
         Cancel
-      </Link>
+      </button>
     </React.Fragment>
   );
 
   return (
     <div>
       <StandardModal
+        onClose={handleClose}
         title='Delete Password'
         content='Are you sure you want to delete this password?'
         actions={actions}

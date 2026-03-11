@@ -1,11 +1,11 @@
 /** @format */
 
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useRef } from "react";
 import { Form, Field } from "react-final-form";
 import { FORM_ERROR } from "final-form";
 import { Dialog, Transition } from "@headlessui/react";
 import { XCircleIcon } from "@heroicons/react/solid";
-import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../loader/Loader";
 import { getErrorMessage } from "../../lib/api";
 import { useNoteQuery, useUpdateNoteMutation } from "../../hooks/useNotes";
@@ -14,15 +14,13 @@ const required = (value) => (value ? undefined : "Required");
 
 const EditNoteModal = () => {
   const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
   const cancelButtonRef = useRef(null);
   const { data: note, isLoading, error } = useNoteQuery(id);
   const updateNoteMutation = useUpdateNoteMutation();
-
-  if (!open) {
-    return <Navigate to='/' />;
-  }
+  const closeTo = location.state?.backgroundLocation?.pathname || "/notes";
+  const handleClose = () => navigate(closeTo);
 
   if (isLoading) {
     return <Loader />;
@@ -35,7 +33,7 @@ const EditNoteModal = () => {
   const onSubmit = async (values) => {
     try {
       await updateNoteMutation.mutateAsync({ id, values });
-      navigate("/notes");
+      navigate(closeTo);
       return undefined;
     } catch (mutationError) {
       return { [FORM_ERROR]: getErrorMessage(mutationError) };
@@ -44,14 +42,13 @@ const EditNoteModal = () => {
 
   return (
     <Fragment>
-      <Transition.Root show={open} as={Fragment}>
+      <Transition.Root show as={Fragment}>
         <Dialog
           as='div'
-          static
-          className='fixed inset-0 z-10 overflow-y-auto'
+          className='fixed inset-0 z-50 overflow-y-auto'
           initialFocus={cancelButtonRef}
-          open={open}
-          onClose={setOpen}>
+          open
+          onClose={handleClose}>
           <div className='flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0'>
             <div className='flex-auto'>
               <Transition.Child
@@ -169,12 +166,12 @@ const EditNoteModal = () => {
                               )}
                               <hr />
                               <div className='flex justify-end pt-5'>
-                                <Link
-                                  to='/notes'
+                                <button
                                   type='button'
                                   className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                                  onClick={handleClose}
                                   Cancel
-                                </Link>
+                                </button>
                                 <button
                                   type='submit'
                                   disabled={updateNoteMutation.isPending}

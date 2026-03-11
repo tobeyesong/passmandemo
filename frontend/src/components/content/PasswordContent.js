@@ -1,7 +1,7 @@
 /** @format */
 
 import React, { Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   TrashIcon,
   PencilIcon,
@@ -13,6 +13,7 @@ import { usePasswordsQuery } from "../../hooks/usePasswords";
 import SiteLogo from "../misc/SiteLogo";
 
 const PasswordContent = (props) => {
+  const location = useLocation();
   const {
     data: passwords = [],
     isLoading,
@@ -69,12 +70,14 @@ const PasswordContent = (props) => {
                             </a>
                             <Link
                               to={`/password/${password._id}/edit`}
+                              state={{ backgroundLocation: location }}
                               type='button'
                               className='card-action-button glass hover:border-slate-200/45 hover:bg-slate-600/70 hover:text-white'>
                               <PencilIcon className='h-5 w-5' aria-hidden='true' />
                             </Link>
                             <Link
                               to={`/password/${password._id}/delete`}
+                              state={{ backgroundLocation: location }}
                               type='button'
                               className='card-action-button glass hover:border-red-200/45 hover:bg-red-500/75 hover:text-white'>
                               <TrashIcon className='h-5 w-5' aria-hidden='true' />
