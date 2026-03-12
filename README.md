@@ -1,50 +1,118 @@
-# PASSMAN DEMO
+# PassMan Demo
+
+PassMan Demo is a design-focused password vault MVP built with React, Express, MongoDB, React Query, Tailwind CSS, and Algolia. The current UI is tuned around two presentation modes: a comfortable dashboard for showcasing richer cards and hierarchy, and a compact search and collection experience for larger vaults.
+
+## Highlights
+
+- Password and secure note vault with create, edit, delete, and search flows
+- Comfortable dashboard cards for portfolio presentation and compact list views for scale
+- Route-backed modals for add, edit, and destructive confirmation states
+- Deterministic `demo` and `stress` seed modes for portfolio screenshots and scale testing
+- Website logos powered by `logo.dev` when available, with graceful fallbacks
+- Algolia-backed search with dedicated empty states for no-match queries
+
+## Screenshots
+
+### Comfortable Workspace
+
+The dashboard is the presentation mode: larger cards, stronger hierarchy, and quick access to the core vault actions.
+
+![Dashboard screenshot](docs/screenshots/dashboard.png)
+
+### Password Vault
+
+Passwords use branded logos, semantic actions, and clearer content hierarchy while still supporting denser collection views when the dataset grows.
+
+![Password vault screenshot](docs/screenshots/passwords.png)
+
+### Secure Notes
+
+Notes follow the same system with larger reading surfaces, strong titles, and fast edit/delete actions.
+
+![Secure notes screenshot](docs/screenshots/notes.png)
+
+### Search At Scale
+
+Search defaults to compact mode so larger result sets stay scannable. When a query returns no results, the UI falls back to dashed empty states instead of leaving large blank panels.
+
+![Search screenshot](docs/screenshots/search.png)
 
 ## Local Setup
 
-- Use Node `20.19.0` and npm `10.8.x`. The repo now includes `.nvmrc`.
-- Install root dependencies with `npm install`.
-- Install frontend dependencies with `npm install --prefix frontend`.
-- Add backend env vars in `.env`:
-  - `MONGO_URI` or `DB_USER` + `DB_PASS`
-- The backend defaults to port `5050` to avoid macOS using `5000`.
-- Run the app with `npm run dev`.
-- Run frontend verification with `npm run verify`.
+1. Use Node `20.19.0` and npm `10.8.x`.
+2. Install root dependencies:
 
+```bash
+npm install
+```
 
-# Portfolio Repository
----
+3. Install frontend dependencies:
 
-## 1. Password Strength Meter
+```bash
+npm install --prefix frontend
+```
 
-Utilizes the `zxcvbn` library to gauge password strength. Users receive feedback labels: "UNSTEADY", "FEEBLE", "ACCEPTABLE", or "EXCEPTIONAL".  Additionally, a colored progress bar visually represents the strength score.
+4. Add backend env vars in `.env`:
 
-- [View Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/misc/PasswordMeter.js)
----
+```bash
+MONGO_URI=...
+```
 
-![alt text](https://i.imgur.com/MxFGAKb.png)
+You can also use the legacy `DB_USER` and `DB_PASS` pair.
 
-## 2. Notes Management
+## Running The App
 
-Enables users to create, view, and manage notes with a title, and caption. 
+Start the backend and frontend together:
 
-- [View Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/screens/NoteScreen.js)
+```bash
+npm run dev
+```
 
+The backend defaults to port `5050`.
 
----
+## Demo Data
 
-## 3. Passwords Management
+Import the smaller curated portfolio dataset:
 
-Securely store and manage passwords. Each entry includes a URL, username, password, and optional notes. Automatically fetches associated website logos.
+```bash
+npm run data:import:demo
+```
 
-- [View Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/screens/PasswordScreen.js)
+Import the larger stress dataset:
 
----
+```bash
+npm run data:import:stress
+```
 
-## 4. Algolia Integration
+Clear seeded data:
 
-Integrates with Algolia for efficient indexing and searching of notes and passwords.
+```bash
+npm run data:destroy
+```
 
-- [View Code for Passwords](https://github.com/tobeyesong/passmandemo/blob/master/backend/controllers/passwordsControllers.js)
-- [View Code for Notes](https://github.com/tobeyesong/passmandemo/blob/master/backend/controllers/notesController.js)
-![image](https://github.com/tobeyesong/passmandemo/assets/65470881/b80ef2b0-9de8-438f-a13e-22fc017f47a0)
+## Verification
+
+Run the current frontend verification flow:
+
+```bash
+npm run verify
+```
+
+Build the frontend only:
+
+```bash
+npm run build:frontend
+```
+
+## Stack
+
+- React 18
+- React Router 6
+- Tailwind CSS
+- Headless UI
+- React Query
+- Express
+- MongoDB with Mongoose
+- Algolia
+- Faker
+- zxcvbn

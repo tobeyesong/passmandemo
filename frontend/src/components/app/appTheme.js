@@ -58,10 +58,17 @@ export const appPanelClassName =
   "relative overflow-hidden rounded-[2rem] bg-white/80 ring-1 ring-white/70";
 
 export const appActionIconButtonClassName =
-  "inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white/90 text-slate-600 transition duration-200 hover:-translate-y-0.5 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300";
+  "inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white/90 text-slate-600 ring-1 ring-transparent transition duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-300";
 
 export const appPrimaryLinkClassName =
   "inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2";
+
+export const actionHoverClassNames = {
+  neutral: "hover:bg-slate-100 hover:text-slate-950 hover:ring-slate-200",
+  open: "hover:bg-sky-50 hover:text-sky-700 hover:ring-sky-200",
+  edit: "hover:bg-cyan-50 hover:text-cyan-700 hover:ring-cyan-200",
+  delete: "hover:bg-red-50 hover:text-red-600 hover:ring-red-200",
+};
 
 export const AppBackdrop = () => (
   <div className='pointer-events-none absolute inset-0 overflow-hidden'>
@@ -169,6 +176,31 @@ export const AppEmptyState = ({
   </AppPanel>
 );
 
+export const AppDashedEmptyState = ({
+  icon: Icon,
+  title,
+  description,
+  className = "",
+}) => (
+  <div
+    className={classNames(
+      "rounded-[1.75rem] border border-dashed border-slate-300/80 bg-slate-50/70 px-6 py-12 sm:px-8",
+      className
+    )}>
+    <div className='mx-auto flex max-w-md flex-col items-center text-center'>
+      <div
+        className='flex h-14 w-14 items-center justify-center rounded-[1.25rem] bg-white text-slate-600'
+        style={appCardStyle}>
+        <Icon className='h-7 w-7' aria-hidden='true' />
+      </div>
+      <h3 className='mt-5 text-xl font-semibold tracking-tight text-slate-950'>
+        {title}
+      </h3>
+      <p className='mt-3 text-sm leading-6 text-slate-600'>{description}</p>
+    </div>
+  </div>
+);
+
 export const AppLoader = ({ label = "Loading secure workspace" }) => (
   <div className='flex justify-center py-10'>
     <div
@@ -178,4 +210,14 @@ export const AppLoader = ({ label = "Loading secure workspace" }) => (
       <span>{label}</span>
     </div>
   </div>
+);
+
+export const AppMetaNote = ({ children, className = "" }) => (
+  <p
+    className={classNames(
+      "text-xs leading-6 text-slate-500",
+      className
+    )}>
+    {children}
+  </p>
 );

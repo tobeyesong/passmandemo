@@ -45,26 +45,34 @@ const Sidebar = ({ isCollapsed = false }) => {
           )}>
           <div
             className={classNames(
-              "flex items-center rounded-[1.75rem] bg-white/5 p-3 ring-1 ring-white/10",
+              "group flex items-center overflow-hidden rounded-[1.75rem] bg-white/5 p-3 ring-1 ring-white/10",
               isCollapsed ? "justify-center" : "gap-3"
             )}>
-            <div className='flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-amber-400/90 text-slate-950 shadow-[0_12px_30px_rgba(245,158,11,0.25)]'>
+            <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[1.2rem] bg-white text-slate-950 shadow-[0_12px_30px_rgba(15,23,42,0.18)]'>
               <img
-                className='h-8 w-auto'
+                className={classNames(
+                  "h-8 w-auto transform-gpu transition-transform duration-700 ease-in-out",
+                  isCollapsed ? "rotate-180" : "rotate-[360deg]"
+                )}
                 src='https://media.publit.io/file/noun_vault_3097826-2.svg'
                 alt='PassMan'
               />
             </div>
-            {!isCollapsed ? (
-              <div className='min-w-0'>
-                <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200'>
-                  Secure Vault
-                </p>
-                <p className='mt-1 truncate text-lg font-semibold text-white'>
-                  PassMan
-                </p>
-              </div>
-            ) : null}
+            <div
+              aria-hidden={isCollapsed}
+              className={classNames(
+                "min-w-0 overflow-hidden transition-all duration-300 ease-out",
+                isCollapsed
+                  ? "max-w-0 translate-x-2 opacity-0"
+                  : "max-w-[11rem] translate-x-0 opacity-100 delay-75"
+              )}>
+              <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200'>
+                Secure Vault
+              </p>
+              <p className='mt-1 truncate text-lg font-semibold text-white'>
+                PassMan
+              </p>
+            </div>
           </div>
         </div>
 

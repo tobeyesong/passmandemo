@@ -14,6 +14,7 @@ import {
 import { Dialog, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
 import Button from "../Button";
+import DensityToggle from "../app/DensityToggle";
 import {
   appActionButtonStyle,
   appSearchFieldStyle,
@@ -35,6 +36,8 @@ const navigation = [
 const SearchBar = ({
   isSidebarCollapsed = false,
   onSidebarToggle = () => {},
+  density = "comfortable",
+  onDensityChange = () => {},
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
@@ -101,10 +104,10 @@ const SearchBar = ({
               </Transition.Child>
 
               <div className='border-b border-white/10 px-5 pb-6 pt-7'>
-                <div className='flex items-center gap-3 rounded-[1.75rem] bg-white/5 p-3 ring-1 ring-white/10'>
-                  <div className='flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-amber-400/90 text-slate-950 shadow-[0_12px_30px_rgba(245,158,11,0.25)]'>
+                <div className='group flex items-center gap-3 rounded-[1.75rem] bg-white/5 p-3 ring-1 ring-white/10'>
+                  <div className='flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-white text-slate-950 shadow-[0_12px_30px_rgba(15,23,42,0.18)]'>
                     <img
-                      className='h-8 w-auto'
+                      className='h-8 w-auto transition-transform duration-700 ease-out motion-safe:group-hover:animate-spin'
                       src='https://media.publit.io/file/noun_vault_3097826-2.svg'
                       alt='PassMan'
                     />
@@ -164,8 +167,8 @@ const SearchBar = ({
         <div
           className='rounded-[1.85rem] bg-white/70 px-3 py-3 ring-1 ring-white/70'
           style={appTopBarStyle}>
-          <div className='flex flex-col gap-3 lg:flex-row lg:items-center'>
-            <div className='flex items-center gap-3'>
+          <div className='flex flex-wrap items-center gap-3 2xl:flex-nowrap'>
+            <div className='order-1 flex flex-wrap items-center gap-3'>
               <button
                 type='button'
                 className='inline-flex h-11 w-11 items-center justify-center rounded-[1rem] bg-slate-900 text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)] focus:outline-none focus:ring-2 focus:ring-amber-300 md:hidden'
@@ -197,7 +200,9 @@ const SearchBar = ({
               </div>
             </div>
 
-            <Link to='/search' className='flex-1'>
+            <Link
+              to='/search'
+              className='order-3 min-w-0 basis-full 2xl:order-2 2xl:flex-1'>
               <div
                 className='flex items-center gap-3 rounded-[1.5rem] bg-slate-100/90 px-4 py-3 text-left transition duration-200 hover:bg-white'
                 style={appSearchFieldStyle}>
@@ -218,11 +223,16 @@ const SearchBar = ({
             </Link>
 
             <div
-              className='hidden items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 lg:inline-flex'
+              className='order-2 ml-auto hidden items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 2xl:order-3 2xl:inline-flex'
               style={appSearchFieldStyle}>
               <span className='h-2 w-2 rounded-full bg-emerald-400' />
               {currentLabel}
             </div>
+            <DensityToggle
+              density={density}
+              onChange={onDensityChange}
+              className='order-2 ml-auto self-start 2xl:order-4 2xl:ml-0 2xl:self-auto'
+            />
           </div>
         </div>
       </div>

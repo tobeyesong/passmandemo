@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/outline";
 import SiteLogo from "../misc/SiteLogo";
 import {
+  actionHoverClassNames,
   appActionButtonStyle,
   appActionIconButtonClassName,
   appCardStyle,
@@ -18,7 +19,7 @@ const withProtocol = (value) =>
   /^https?:\/\//i.test(value || "") ? value : `https://${value || ""}`;
 
 const compactActionClassName =
-  "inline-flex h-9 w-9 items-center justify-center rounded-[0.95rem] bg-white text-slate-600 transition duration-200 hover:-translate-y-0.5 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300";
+  "inline-flex h-9 w-9 items-center justify-center rounded-[0.95rem] bg-white text-slate-600 ring-1 ring-transparent transition duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-300";
 
 const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
   const siteHref = withProtocol(password.url);
@@ -29,7 +30,8 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
       <article
         className='group relative overflow-hidden rounded-[1.35rem] bg-white/95 p-4 ring-1 ring-slate-900/5 transition duration-200 hover:-translate-y-0.5 hover:ring-slate-900/10'
         style={appCardStyle}>
-        <div className='absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-300 via-orange-300 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
+        <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-amber-300 via-orange-300 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
+        <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
         <div className='flex min-w-0 items-center gap-3'>
           <SiteLogo
             url={password.url}
@@ -49,7 +51,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
           <div className='flex flex-shrink-0 gap-2'>
             <a
               href={siteHref}
-              className={compactActionClassName}
+              className={`${compactActionClassName} ${actionHoverClassNames.open}`}
               style={appActionButtonStyle}
               aria-label={`Open ${password.url}`}>
               <ChevronDoubleUpIcon className='h-4 w-4' aria-hidden='true' />
@@ -57,7 +59,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
             <Link
               to={`/password/${id}/edit`}
               state={{ backgroundLocation }}
-              className={compactActionClassName}
+              className={`${compactActionClassName} ${actionHoverClassNames.edit}`}
               style={appActionButtonStyle}
               aria-label={`Edit ${password.url}`}>
               <PencilIcon className='h-4 w-4' aria-hidden='true' />
@@ -65,7 +67,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
             <Link
               to={`/password/${id}/delete`}
               state={{ backgroundLocation }}
-              className={compactActionClassName}
+              className={`${compactActionClassName} ${actionHoverClassNames.delete}`}
               style={appActionButtonStyle}
               aria-label={`Delete ${password.url}`}>
               <TrashIcon className='h-4 w-4' aria-hidden='true' />
@@ -80,12 +82,13 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
     <article
       className='group relative overflow-hidden rounded-[1.75rem] bg-white/95 p-5 ring-1 ring-slate-900/5 transition duration-200 hover:-translate-y-1 hover:ring-slate-900/10'
       style={appCardStyle}>
-      <div className='absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-300 via-orange-300 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
+      <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-amber-300 via-orange-300 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
+      <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
 
       <div className='absolute right-5 top-5 flex gap-2'>
         <a
           href={siteHref}
-          className={appActionIconButtonClassName}
+          className={`${appActionIconButtonClassName} ${actionHoverClassNames.open}`}
           style={appActionButtonStyle}
           aria-label={`Open ${password.url}`}>
           <ChevronDoubleUpIcon className='h-5 w-5' aria-hidden='true' />
@@ -93,7 +96,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
         <Link
           to={`/password/${id}/edit`}
           state={{ backgroundLocation }}
-          className={appActionIconButtonClassName}
+          className={`${appActionIconButtonClassName} ${actionHoverClassNames.edit}`}
           style={appActionButtonStyle}
           aria-label={`Edit ${password.url}`}>
           <PencilIcon className='h-5 w-5' aria-hidden='true' />
@@ -101,7 +104,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
         <Link
           to={`/password/${id}/delete`}
           state={{ backgroundLocation }}
-          className={appActionIconButtonClassName}
+          className={`${appActionIconButtonClassName} ${actionHoverClassNames.delete}`}
           style={appActionButtonStyle}
           aria-label={`Delete ${password.url}`}>
           <TrashIcon className='h-5 w-5' aria-hidden='true' />

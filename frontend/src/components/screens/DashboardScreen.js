@@ -7,11 +7,16 @@ import SearchBar from "../navbar/SearchBar";
 import PasswordContent from "../content/PasswordContent";
 import NoteContent from "../content/NoteContent";
 import useDesktopSidebarState from "../../hooks/useDesktopSidebarState";
+import useCollectionDensity from "../../hooks/useCollectionDensity";
 import { AppBackdrop, appPageStyle } from "../app/appTheme";
 // import AddressContent from "../content/AddressContent";
 
 const DashboardScreen = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useDesktopSidebarState();
+  const [density, setDensity] = useCollectionDensity(
+    "passman.dashboardDensity",
+    "comfortable"
+  );
 
   return (
     <div className='relative flex h-screen overflow-hidden' style={appPageStyle}>
@@ -22,10 +27,12 @@ const DashboardScreen = () => {
           <SearchBar
             isSidebarCollapsed={isSidebarCollapsed}
             onSidebarToggle={() => setSidebarCollapsed((current) => !current)}
+            density={density}
+            onDensityChange={setDensity}
           />
 
-          <PasswordContent title='Passwords' />
-          <NoteContent title='Notes' />
+          <PasswordContent title='Passwords' density={density} />
+          <NoteContent title='Notes' density={density} />
           {/* <AddressContent title='Addresses' /> */}
         </div>
       </div>

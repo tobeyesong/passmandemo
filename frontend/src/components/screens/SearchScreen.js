@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../navbar/Sidebar";
 import Loader from "../Loader";
@@ -8,15 +8,24 @@ import Button from "../Button";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
+  DocumentTextIcon,
+  FingerPrintIcon,
   HomeIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
-import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
+import {
+  InstantSearch,
+  SearchBox,
+  Index,
+  connectHits,
+} from "react-instantsearch-dom";
 import { useNotesQuery } from "../../hooks/useNotes";
 import { usePasswordsQuery } from "../../hooks/usePasswords";
 import useDesktopSidebarState from "../../hooks/useDesktopSidebarState";
 import {
   AppBackdrop,
+  AppDashedEmptyState,
+  AppMetaNote,
   AppPanel,
   AppSectionHeader,
   appActionButtonStyle,
@@ -24,6 +33,7 @@ import {
   appSearchFieldStyle,
   appTopBarStyle,
 } from "../app/appTheme";
+import DensityToggle from "../app/DensityToggle";
 import PasswordCard from "../content/PasswordCard";
 import NoteCard from "../content/NoteCard";
 
@@ -34,9 +44,26 @@ const searchClient = algoliasearch(
 const passwordIndex = searchClient.initIndex("passwordDemo");
 const noteIndex = searchClient.initIndex("noteDemo");
 
+const SearchHits = connectHits(({ hits, renderHit, emptyState }) => {
+  if (!hits.length) {
+    return emptyState;
+  }
+
+  return (
+    <ul className='grid gap-5'>
+      {hits.map((hit) => (
+        <li key={hit.objectID || hit._id} className='m-0 list-none'>
+          {renderHit(hit)}
+        </li>
+      ))}
+    </ul>
+  );
+});
+
 const SearchScreen = () => {
   const location = useLocation();
   const [isSidebarCollapsed, setSidebarCollapsed] = useDesktopSidebarState();
+  const [density, setDensity] = useState("compact");
   const {
     data: passwordResults = [],
     isLoading: passwordsLoading,
@@ -124,8 +151,8 @@ const SearchScreen = () => {
               <div
                 className='rounded-[1.85rem] bg-white/70 px-3 py-3 ring-1 ring-white/70'
                 style={appTopBarStyle}>
-                <div className='flex flex-col gap-3 lg:flex-row lg:items-center'>
-                  <div className='flex items-center gap-3'>
+                <div className='flex flex-wrap items-center gap-3 2xl:flex-nowrap'>
+                  <div className='order-1 flex flex-wrap items-center gap-3'>
                     <button
                       type='button'
                       className='hidden h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex'
@@ -157,9 +184,13 @@ const SearchScreen = () => {
                       <HomeIcon className='h-5 w-5' aria-hidden='true' />
                       <span>Dashboard</span>
                     </Link>
+                    <DensityToggle
+                      density={density}
+                      onChange={setDensity}
+                    />
                   </div>
 
-                  <div className='min-w-0 flex-1'>
+                  <div className='order-2 min-w-0 basis-full 2xl:flex-1'>
                     <p className='mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500'>
                       Search The Vault
                     </p>
@@ -188,14 +219,25 @@ const SearchScreen = () => {
                     title='Passwords'
                     description='Matching credentials appear here as you type.'
                   />
+                  <AppMetaNote className='mt-4'>
+                    Site logos use logo.dev when available. If a logo is
+                    missing, the vault falls back to the site initial.
+                  </AppMetaNote>
                   <div className='mt-8'>
                     <Index indexName='passwordDemo'>
-                      <Hits
-                        hitComponent={({ hit }) => (
+                      <SearchHits
+                        emptyState={
+                          <AppDashedEmptyState
+                            icon={FingerPrintIcon}
+                            title='No passwords match this search'
+                            description='Try another domain, username, or broader keyword to surface more saved credentials.'
+                          />
+                        }
+                        renderHit={(hit) => (
                           <PasswordCard
                             password={hit}
                             backgroundLocation={location}
-                            compact
+                            compact={density === "compact"}
                           />
                         )}
                       />
@@ -211,12 +253,19 @@ const SearchScreen = () => {
                   />
                   <div className='mt-8'>
                     <Index indexName='noteDemo'>
-                      <Hits
-                        hitComponent={({ hit }) => (
+                      <SearchHits
+                        emptyState={
+                          <AppDashedEmptyState
+                            icon={DocumentTextIcon}
+                            title='No notes match this search'
+                            description='Try another keyword or broaden the query to bring matching secure notes back into view.'
+                          />
+                        }
+                        renderHit={(hit) => (
                           <NoteCard
                             note={hit}
                             backgroundLocation={location}
-                            compact
+                            compact={density === "compact"}
                           />
                         )}
                       />

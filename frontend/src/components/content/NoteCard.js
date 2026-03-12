@@ -8,13 +8,14 @@ import {
   TrashIcon,
 } from "@heroicons/react/outline";
 import {
+  actionHoverClassNames,
   appActionButtonStyle,
   appActionIconButtonClassName,
   appCardStyle,
 } from "../app/appTheme";
 
 const compactActionClassName =
-  "inline-flex h-9 w-9 items-center justify-center rounded-[0.95rem] bg-white text-slate-600 transition duration-200 hover:-translate-y-0.5 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300";
+  "inline-flex h-9 w-9 items-center justify-center rounded-[0.95rem] bg-white text-slate-600 ring-1 ring-transparent transition duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-300";
 
 const NoteCard = ({ note, backgroundLocation, compact = false }) => {
   const id = note._id || note.objectID;
@@ -24,7 +25,8 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
       <article
         className='group relative overflow-hidden rounded-[1.35rem] bg-white/95 p-4 ring-1 ring-slate-900/5 transition duration-200 hover:-translate-y-0.5 hover:ring-slate-900/10'
         style={appCardStyle}>
-        <div className='absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
+        <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
+        <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-amber-200 via-cyan-200 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
         <div className='flex min-w-0 items-center gap-3'>
           <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[1rem] bg-sky-50 text-sky-700 ring-1 ring-sky-100'>
             <DocumentTextIcon className='h-6 w-6' aria-hidden='true' />
@@ -41,7 +43,7 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
             <Link
               to={`/note/${id}/edit`}
               state={{ backgroundLocation }}
-              className={compactActionClassName}
+              className={`${compactActionClassName} ${actionHoverClassNames.edit}`}
               style={appActionButtonStyle}
               aria-label={`Edit ${note.title}`}>
               <PencilIcon className='h-4 w-4' aria-hidden='true' />
@@ -49,7 +51,7 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
             <Link
               to={`/note/${id}/delete`}
               state={{ backgroundLocation }}
-              className={compactActionClassName}
+              className={`${compactActionClassName} ${actionHoverClassNames.delete}`}
               style={appActionButtonStyle}
               aria-label={`Delete ${note.title}`}>
               <TrashIcon className='h-4 w-4' aria-hidden='true' />
@@ -64,13 +66,14 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
     <article
       className='group relative overflow-hidden rounded-[1.75rem] bg-white/95 p-5 ring-1 ring-slate-900/5 transition duration-200 hover:-translate-y-1 hover:ring-slate-900/10'
       style={appCardStyle}>
-      <div className='absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
+      <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
+      <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-amber-200 via-cyan-200 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
 
       <div className='absolute right-5 top-5 flex gap-2'>
         <Link
           to={`/note/${id}/edit`}
           state={{ backgroundLocation }}
-          className={appActionIconButtonClassName}
+          className={`${appActionIconButtonClassName} ${actionHoverClassNames.edit}`}
           style={appActionButtonStyle}
           aria-label={`Edit ${note.title}`}>
           <PencilIcon className='h-5 w-5' aria-hidden='true' />
@@ -78,7 +81,7 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
         <Link
           to={`/note/${id}/delete`}
           state={{ backgroundLocation }}
-          className={appActionIconButtonClassName}
+          className={`${appActionIconButtonClassName} ${actionHoverClassNames.delete}`}
           style={appActionButtonStyle}
           aria-label={`Delete ${note.title}`}>
           <TrashIcon className='h-5 w-5' aria-hidden='true' />

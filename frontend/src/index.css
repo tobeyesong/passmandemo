@@ -40,7 +40,7 @@
 }
 
 .ais-SearchBox-form {
-  @apply relative w-full text-slate-400;
+  @apply relative w-full rounded-[1.15rem] text-slate-400 transition duration-200 ease-out;
 }
 
 .ais-Hits-list {
@@ -52,13 +52,26 @@
 }
 
 .ais-SearchBox-form input[type="search"] {
-  @apply block w-full h-full border-0 bg-transparent py-2 pl-10 pr-3 text-base text-slate-900 placeholder-slate-400 focus:ring-0 focus:border-transparent sm:text-sm;
+  @apply block w-full h-full border-0 bg-transparent py-2 pl-10 pr-3 text-base text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-0 focus:border-transparent sm:text-sm;
+  caret-color: rgb(180 83 9);
 }
 
 .ais-SearchBox-submit {
-  @apply absolute left-3 top-1/2 -translate-y-1/2 text-amber-600;
+  @apply absolute left-3 top-1/2 -translate-y-1/2 text-amber-600 transition duration-200 ease-out;
 }
 
 .ais-SearchBox-reset {
   @apply hidden;
+}
+
+.vault-search .ais-SearchBox-form:focus-within {
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    inset 0 0 0 1px rgba(245, 158, 11, 0.2),
+    0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.vault-search .ais-SearchBox-form:focus-within .ais-SearchBox-submit {
+  color: rgb(180 83 9);
+  transform: translateY(-50%) scale(1.04);
 }
