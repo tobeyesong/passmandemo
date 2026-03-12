@@ -1,6 +1,41 @@
 # PassMan Demo
 
-PassMan Demo is a password vault MVP with a React frontend and an Express + MongoDB backend. The app supports passwords, secure notes, search, seeded demo data, and route-backed modal flows for create and edit actions.
+PassMan Demo is a design-focused password vault MVP with a React frontend and an Express + MongoDB backend. The app supports passwords, secure notes, search, seeded demo data, and route-backed modal flows for create and edit actions.
+
+## Highlights
+
+- Password and secure note vault with create, edit, delete, and search flows
+- Comfortable dashboard cards for portfolio presentation and compact list views for scale
+- Route-backed modals for add, edit, and destructive confirmation states
+- Deterministic `demo` and `stress` seed modes for portfolio screenshots and scale testing
+- Website logos powered by `logo.dev` when available, with graceful fallbacks
+- Algolia-backed search with dedicated empty states for no-match queries
+
+## Screenshots
+
+### Comfortable Workspace
+
+The dashboard is the presentation mode: larger cards, stronger hierarchy, and quick access to the core vault actions.
+
+![Dashboard screenshot](docs/screenshots/dashboard.png)
+
+### Password Vault
+
+Passwords use branded logos, semantic actions, and clearer content hierarchy while still supporting denser collection views when the dataset grows.
+
+![Password vault screenshot](docs/screenshots/passwords.png)
+
+### Secure Notes
+
+Notes follow the same system with larger reading surfaces, strong titles, and fast edit/delete actions.
+
+![Secure notes screenshot](docs/screenshots/notes.png)
+
+### Search At Scale
+
+Search defaults to compact mode so larger result sets stay scannable. When a query returns no results, the UI falls back to dashed empty states instead of leaving large blank panels.
+
+![Search screenshot](docs/screenshots/search.png)
 
 ## Getting Started
 
