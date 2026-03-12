@@ -13,6 +13,7 @@ import {
   ChevronDoubleRightIcon,
   ArrowNarrowLeftIcon,
   DocumentTextIcon,
+  HomeIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
@@ -139,21 +140,32 @@ const SearchScreen = () => {
                     />
                   )}
                 </button>
+                {isSidebarCollapsed && (
+                  <Link
+                    to='/'
+                    className='items-center hidden gap-2 px-4 text-sm font-medium text-gray-600 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg hover:bg-gray-50 hover:text-gray-900 focus:shadow-inner focus:outline-none md:inline-flex'>
+                    <HomeIcon className='w-5 h-5' aria-hidden='true' />
+                    <span>Dashboard</span>
+                  </Link>
+                )}
                 <Link
                   to='/'
-                  className='inline-flex items-center px-4 text-gray-500 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg focus:shadow-inner rounded-l-md focus:outline-none md:hidden'>
+                  className='inline-flex items-center gap-2 px-4 text-sm font-medium text-gray-600 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg hover:bg-gray-50 hover:text-gray-900 focus:shadow-inner rounded-l-md focus:outline-none md:hidden'>
                   <ArrowNarrowLeftIcon
-                    className='items-center w-6 h-6'
+                    className='items-center w-5 h-5'
                     aria-hidden='true'
                   />
+                  <span>Dashboard</span>
                 </Link>
-                <SearchBox
-                  className='w-full '
-                  autoFocus
-                  translations={{
-                    placeholder: "Search Everything",
-                  }}
-                />
+                <div className='w-full'>
+                  <SearchBox
+                    className='w-full '
+                    autoFocus
+                    translations={{
+                      placeholder: "Search Everything",
+                    }}
+                  />
+                </div>
               </div>
               <div className='px-4 mx-auto max-w-7xl sm:px-6 lg:px-8'>
                 <div className='max-w-5xl mx-auto'>
