@@ -1,33 +1,28 @@
 /** @format */
 
-import React, { Fragment, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Form, Field } from "react-final-form";
 import { FORM_ERROR } from "final-form";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import { Dialog, Transition } from "@headlessui/react";
+import { useNavigate } from "react-router-dom";
 import { XCircleIcon, EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
 import { OnChange } from "../forms/OnChange";
 import PasswordMeter from "../misc/PasswordMeter";
 import { getErrorMessage } from "../../lib/api";
 import { useCreatePasswordMutation } from "../../hooks/usePasswords";
+import ModalShell from "./ModalShell";
 
 const required = (value) => (value ? undefined : "Required");
 
 const AddPasswordModal = () => {
   const navigate = useNavigate();
   const [target, setTarget] = useState("");
-  const [open, setOpen] = useState(true);
   const [passwordShown, setPasswordShown] = useState(false);
-  const cancelButtonRef = useRef(null);
   const createPasswordMutation = useCreatePasswordMutation();
+  const handleClose = () => navigate("/passwords");
 
   const togglePassword = () => {
     setPasswordShown((current) => !current);
   };
-
-  if (!open) {
-    return <Navigate to='/' />;
-  }
 
   const onSubmit = async (values) => {
     try {
@@ -40,43 +35,8 @@ const AddPasswordModal = () => {
   };
 
   return (
-    <Fragment>
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog
-          as='div'
-          static
-          className='fixed inset-0 z-10 overflow-y-auto'
-          initialFocus={cancelButtonRef}
-          open={open}
-          onClose={setOpen}>
-          <div className='flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0'>
-            <div className='flex-auto'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0'
-                enterTo='opacity-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100'
-                leaveTo='opacity-0'>
-                <Dialog.Overlay className='fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 ' />
-              </Transition.Child>
-
-              <span
-                className='hidden sm:inline-block sm:align-middle sm:h-screen'
-                aria-hidden='true'>
-                &#8203;
-              </span>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-                enterTo='opacity-100 translate-y-0 sm:scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 translate-y-0 sm:scale-100'
-                leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                <div className='inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-100 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 lg:max-w-5xl'>
-                  <div className='px-4 py-5 sm:p-6'>
+    <ModalShell onClose={handleClose}>
+      <div className='px-4 py-5 sm:p-6'>
                     <h3 className='p-2 space-y-8 text-lg font-medium leading-6 text-gray-800 bg-yellow-500 divide-y divide-gray-200 shadow-lg bg-yellow-500border-2 rounded-t-md sm:space-y-5'>
                       Add Password
                     </h3>
@@ -269,12 +229,12 @@ const AddPasswordModal = () => {
                             </div>
                             <div className='pt-5'>
                               <div className='flex justify-end'>
-                                <Link
-                                  to='/passwords'
+                                <button
                                   type='button'
+                                  onClick={handleClose}
                                   className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
                                   Cancel
-                                </Link>
+                                </button>
 
                                 <button
                                   type='submit'
@@ -290,14 +250,8 @@ const AddPasswordModal = () => {
                         </form>
                       )}
                     />
-                  </div>
-                </div>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition.Root>
-    </Fragment>
+      </div>
+    </ModalShell>
   );
 };
 

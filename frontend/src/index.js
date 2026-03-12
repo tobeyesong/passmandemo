@@ -9,6 +9,18 @@ import App from "./App";
 import queryClient from "./lib/queryClient";
 
 if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+  if ("ResizeObserver" in window) {
+    const NativeResizeObserver = window.ResizeObserver;
+
+    window.ResizeObserver = class ResizeObserver extends NativeResizeObserver {
+      constructor(callback) {
+        super((entries, observer) => {
+          window.requestAnimationFrame(() => callback(entries, observer));
+        });
+      }
+    };
+  }
+
   const resizeObserverError =
     /ResizeObserver loop (completed with undelivered notifications|limit exceeded)/;
   const isResizeObserverMessage = (value) =>

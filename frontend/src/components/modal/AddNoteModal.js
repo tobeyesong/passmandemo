@@ -1,25 +1,20 @@
 /** @format */
 
-import React, { Fragment, useRef, useState } from "react";
+import React from "react";
 import { Form, Field } from "react-final-form";
 import { FORM_ERROR } from "final-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { XCircleIcon } from "@heroicons/react/solid";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "../../lib/api";
 import { useCreateNoteMutation } from "../../hooks/useNotes";
+import ModalShell from "./ModalShell";
 
 const required = (value) => (value ? undefined : "Required");
 
 const AddNoteModal = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
-  const cancelButtonRef = useRef(null);
   const createNoteMutation = useCreateNoteMutation();
-
-  if (!open) {
-    return <Navigate to='/' />;
-  }
+  const handleClose = () => navigate("/notes");
 
   const onSubmit = async (values) => {
     try {
@@ -32,43 +27,8 @@ const AddNoteModal = () => {
   };
 
   return (
-    <Fragment>
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog
-          as='div'
-          static
-          className='fixed inset-0 z-10 overflow-y-auto'
-          initialFocus={cancelButtonRef}
-          open={open}
-          onClose={setOpen}>
-          <div className='flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0'>
-            <div className='flex-auto'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0'
-                enterTo='opacity-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100'
-                leaveTo='opacity-0'>
-                <Dialog.Overlay className='fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 ' />
-              </Transition.Child>
-
-              <span
-                className='hidden sm:inline-block sm:align-middle sm:h-screen'
-                aria-hidden='true'>
-                &#8203;
-              </span>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-                enterTo='opacity-100 translate-y-0 sm:scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 translate-y-0 sm:scale-100'
-                leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                <div className='inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-100 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 lg:max-w-5xl'>
-                  <div className='px-4 py-5 sm:p-6'>
+    <ModalShell onClose={handleClose}>
+      <div className='px-4 py-5 sm:p-6'>
                     <h3 className='p-2 space-y-8 text-lg font-medium leading-6 text-gray-800 bg-yellow-500 border-gray-300 divide-y divide-gray-200 shadow-sm border-3 rounded-t-md sm:space-y-5'>
                       Add a Secure Note
                     </h3>
@@ -152,12 +112,12 @@ const AddNoteModal = () => {
                               )}
                               <hr />
                               <div className='flex justify-end pt-5'>
-                                <Link
-                                  to='/notes'
+                                <button
                                   type='button'
+                                  onClick={handleClose}
                                   className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'>
                                   Cancel
-                                </Link>
+                                </button>
                                 <button
                                   type='submit'
                                   disabled={createNoteMutation.isPending}
@@ -172,14 +132,8 @@ const AddNoteModal = () => {
                         </form>
                       )}
                     />
-                  </div>
-                </div>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition.Root>
-    </Fragment>
+      </div>
+    </ModalShell>
   );
 };
 

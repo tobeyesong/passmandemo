@@ -1,14 +1,14 @@
 /** @format */
 
-import React, { Fragment, useRef } from "react";
+import React from "react";
 import { Form, Field } from "react-final-form";
 import { FORM_ERROR } from "final-form";
-import { Dialog, Transition } from "@headlessui/react";
 import { XCircleIcon } from "@heroicons/react/solid";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Loader from "../loader/Loader";
 import { getErrorMessage } from "../../lib/api";
 import { useNoteQuery, useUpdateNoteMutation } from "../../hooks/useNotes";
+import ModalShell from "./ModalShell";
 
 const required = (value) => (value ? undefined : "Required");
 
@@ -16,7 +16,6 @@ const EditNoteModal = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const cancelButtonRef = useRef(null);
   const { data: note, isLoading, error } = useNoteQuery(id);
   const updateNoteMutation = useUpdateNoteMutation();
   const closeTo = location.state?.backgroundLocation?.pathname || "/notes";
@@ -41,42 +40,8 @@ const EditNoteModal = () => {
   };
 
   return (
-    <Fragment>
-      <Transition.Root show as={Fragment}>
-        <Dialog
-          as='div'
-          className='fixed inset-0 z-50 overflow-y-auto'
-          initialFocus={cancelButtonRef}
-          open
-          onClose={handleClose}>
-          <div className='flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0'>
-            <div className='flex-auto'>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0'
-                enterTo='opacity-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100'
-                leaveTo='opacity-0'>
-                <Dialog.Overlay className='fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 ' />
-              </Transition.Child>
-
-              <span
-                className='hidden sm:inline-block sm:align-middle sm:h-screen'
-                aria-hidden='true'>
-                &#8203;
-              </span>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-out duration-300'
-                enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-                enterTo='opacity-100 translate-y-0 sm:scale-100'
-                leave='ease-in duration-200'
-                leaveFrom='opacity-100 translate-y-0 sm:scale-100'
-                leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                <div className='inline-block px-4 pt-5 pb-4 overflow-hidden text-left align-bottom transition-all transform bg-gray-100 rounded-lg shadow-xl sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 lg:max-w-5xl'>
-                  <div className='px-4 py-5 sm:p-6'>
+    <ModalShell onClose={handleClose}>
+      <div className='px-4 py-5 sm:p-6'>
                     <h3 className='p-2 space-y-8 text-lg font-medium leading-6 text-gray-800 bg-yellow-500 border-2 border-gray-300 divide-y divide-gray-200 shadow-lg rounded-t-md sm:space-y-5'>
                       Edit Note
                     </h3>
@@ -186,14 +151,8 @@ const EditNoteModal = () => {
                         </form>
                       )}
                     />
-                  </div>
-                </div>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition.Root>
-    </Fragment>
+      </div>
+    </ModalShell>
   );
 };
 
