@@ -20,7 +20,11 @@ const navigation = [
   // { name: "Addresses", href: "/addresses", icon: MapIcon },
 ];
 
-const Sidebar = ({ isVisible = true }) => {
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
+const Sidebar = ({ isCollapsed = false }) => {
   const { pathname } = useLocation();
 
   const isActive = (href) =>
@@ -29,44 +33,63 @@ const Sidebar = ({ isVisible = true }) => {
       : pathname.startsWith(href);
 
   return (
-    <div className='flex h-screen overflow-hidden bg-gray-100'>
-      {/* Static sidebar for desktop */}
-      <div className={isVisible ? "hidden md:flex md:flex-shrink-0" : "hidden"}>
-        <div className='flex flex-col w-64'>
-          {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className='flex flex-col flex-grow pt-5 pb-4 overflow-y-auto bg-white border-r border-gray-200'>
-            <div className='flex items-center flex-shrink-0 px-4'>
-              <img
-                className='w-auto h-10 transition-all hover:animate-spin'
-                src='https://media.publit.io/file/noun_vault_3097826-2.svg'
-                alt='PassMan'
-              />
-              <span className='text-2xl text-gray-500 uppercase '>PassMan</span>
-            </div>
-            <div className='flex flex-col flex-grow mt-5'>
-              <nav className='flex-1 px-2 space-y-1 bg-white'>
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.name}
-                    to={item.href}
-                    className={() =>
-                      isActive(item.href)
-                        ? "bg-yellow-400 flex items-center px-2 py-2 text-sm font-medium text-gray-600 rounded-md group hover:bg-yellow-100 hover:text-gray-900"
-                        : "flex items-center px-2 py-2 text-sm font-medium text-gray-600 rounded-md group hover:bg-yellow-100 hover:text-gray-900"
-                    }>
-                    <item.icon
-                      className='flex-shrink-0 w-6 h-6 mr-3'
-                      aria-hidden='true'
-                    />
-                    {item.name}
-                  </NavLink>
-                ))}
-              </nav>
-            </div>
-          </div>
+    <aside
+      className={classNames(
+        "relative hidden h-screen flex-shrink-0 border-r border-gray-200 bg-white transition-all duration-300 ease-in-out md:flex",
+        isCollapsed ? "w-20" : "w-64"
+      )}>
+      <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
+        <div
+          className={classNames(
+            "flex h-20 flex-shrink-0 items-center border-b border-gray-100",
+            isCollapsed ? "justify-center px-2" : "px-4"
+          )}>
+          <img
+            className='h-10 w-auto transition-all hover:animate-spin'
+            src='https://media.publit.io/file/noun_vault_3097826-2.svg'
+            alt='PassMan'
+          />
+          {!isCollapsed && (
+            <span className='ml-3 text-2xl uppercase text-gray-500'>
+              PassMan
+            </span>
+          )}
+        </div>
+
+        <div className='flex min-h-0 flex-1 flex-col overflow-y-auto py-4'>
+          <nav className='flex-1 space-y-2 px-2'>
+            {navigation.map((item) => (
+              <NavLink
+                key={item.name}
+                to={item.href}
+                title={isCollapsed ? item.name : undefined}
+                className={() =>
+                  classNames(
+                    "group flex items-center rounded-xl py-3 text-sm font-medium transition",
+                    isCollapsed ? "justify-center px-2" : "px-3",
+                    isActive(item.href)
+                      ? "bg-yellow-400 text-gray-700 shadow-sm"
+                      : "text-gray-600 hover:bg-yellow-100 hover:text-gray-900"
+                  )
+                }>
+                <item.icon
+                  className={classNames(
+                    "h-6 w-6 flex-shrink-0",
+                    isCollapsed ? "" : "mr-3"
+                  )}
+                  aria-hidden='true'
+                />
+                {isCollapsed ? (
+                  <span className='sr-only'>{item.name}</span>
+                ) : (
+                  item.name
+                )}
+              </NavLink>
+            ))}
+          </nav>
         </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

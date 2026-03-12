@@ -1,7 +1,6 @@
 /** @format */
-/** @format */
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../navbar/Sidebar";
 import Loader from "../Loader";
@@ -10,9 +9,9 @@ import {
   TrashIcon,
   PencilIcon,
   ChevronDoubleUpIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
   ArrowNarrowLeftIcon,
-  MenuAlt2Icon,
-  XIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
@@ -20,6 +19,7 @@ import Title from "../misc/Title";
 import SiteLogo from "../misc/SiteLogo";
 import { useNotesQuery } from "../../hooks/useNotes";
 import { usePasswordsQuery } from "../../hooks/usePasswords";
+import useDesktopSidebarState from "../../hooks/useDesktopSidebarState";
 
 const searchClient = algoliasearch(
   "BC38Z1AKHU",
@@ -30,7 +30,7 @@ const noteIndex = searchClient.initIndex("noteDemo");
 
 const SearchScreen = () => {
   const location = useLocation();
-  const [isSidebarVisible, setSidebarVisible] = useState(true);
+  const [isSidebarCollapsed, setSidebarCollapsed] = useDesktopSidebarState();
   const {
     data: passwordResults = [],
     isLoading: passwordsLoading,
@@ -111,7 +111,7 @@ const SearchScreen = () => {
 
   return (
     <div className='relative flex flex-1 h-screen overflow-hidden bg-gray-100'>
-      <Sidebar isVisible={isSidebarVisible} />
+      <Sidebar isCollapsed={isSidebarCollapsed} />
       <div className='flex flex-col flex-1 w-0 overflow-auto'>
         <InstantSearch indexName='passwordDemo' searchClient={searchClient}>
           <div className='app'>
@@ -120,14 +120,22 @@ const SearchScreen = () => {
                 <button
                   type='button'
                   className='items-center hidden px-4 text-gray-500 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg focus:shadow-inner focus:outline-none md:inline-flex'
-                  onClick={() => setSidebarVisible((current) => !current)}>
+                  onClick={() => setSidebarCollapsed((current) => !current)}>
                   <span className='sr-only'>
-                    {isSidebarVisible ? "Hide sidebar" : "Show sidebar"}
+                    {isSidebarCollapsed
+                      ? "Expand sidebar"
+                      : "Collapse sidebar"}
                   </span>
-                  {isSidebarVisible ? (
-                    <XIcon className='w-6 h-6' aria-hidden='true' />
+                  {isSidebarCollapsed ? (
+                    <ChevronDoubleRightIcon
+                      className='w-6 h-6'
+                      aria-hidden='true'
+                    />
                   ) : (
-                    <MenuAlt2Icon className='w-6 h-6' aria-hidden='true' />
+                    <ChevronDoubleLeftIcon
+                      className='w-6 h-6'
+                      aria-hidden='true'
+                    />
                   )}
                 </button>
                 <Link
