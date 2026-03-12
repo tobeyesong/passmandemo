@@ -2,7 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import { Field, Form } from "react-final-form";
+import { ClipboardCheckIcon, ClipboardCopyIcon } from "@heroicons/react/outline";
 import { EyeIcon, EyeOffIcon } from "@heroicons/react/solid";
+import { toast } from "react-toastify";
 import { OnChange } from "../forms/OnChange";
 import PasswordMeter from "../misc/PasswordMeter";
 import ModalShell from "./ModalShell";
@@ -21,6 +23,52 @@ import {
 } from "./modalTheme";
 
 const required = (value) => (value ? undefined : "Required");
+
+const CopyValueButton = ({ value, label }) => {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setCopied(false);
+    }, 1600);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [copied]);
+
+  const handleCopy = async () => {
+    if (!value) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      toast.success(`${label} copied`);
+    } catch {
+      toast.error(`Could not copy ${label.toLowerCase()}`);
+    }
+  };
+
+  return (
+    <button
+      type='button'
+      onClick={handleCopy}
+      disabled={!value}
+      aria-label={`Copy ${label.toLowerCase()}`}
+      className='m-1.5 inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white text-slate-600 transition hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-45 focus:outline-none focus:ring-2 focus:ring-amber-300'
+      style={modalIconButtonStyle}>
+      {copied ? (
+        <ClipboardCheckIcon className='h-5 w-5 text-emerald-600' />
+      ) : (
+        <ClipboardCopyIcon className='h-5 w-5' />
+      )}
+    </button>
+  );
+};
 
 const PasswordModalForm = ({
   title,
@@ -58,7 +106,7 @@ const PasswordModalForm = ({
                   eyebrow='Primary Fields'
                   title='Core access details'
                   description='Start with the site and login details you will need most often.'>
-                  <div className='grid gap-5 sm:grid-cols-2'>
+                  <div className='space-y-5'>
                     <Field
                       name='url'
                       component='input'
@@ -66,7 +114,6 @@ const PasswordModalForm = ({
                       validate={required}>
                       {({ input, meta, placeholder }) => (
                         <ModalField
-                          className='sm:col-span-2'
                           label='Website'
                           htmlFor='password-url'
                           hint='Use the main domain when this login covers multiple pages.'
@@ -98,14 +145,21 @@ const PasswordModalForm = ({
                           label='Username'
                           htmlFor='password-username'
                           error={meta.touched ? meta.error : undefined}>
-                          <input
-                            {...input}
-                            id='password-username'
-                            type='text'
-                            placeholder={placeholder}
-                            className='block w-full rounded-[1.25rem] border-0 bg-slate-100 px-4 py-3 text-[15px] leading-6 text-slate-900 placeholder-slate-400 transition focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-300'
-                            style={modalInsetStyle}
-                          />
+                          <div
+                            className='flex rounded-[1.25rem] bg-slate-100 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-amber-300'
+                            style={modalInsetStyle}>
+                            <input
+                              {...input}
+                              id='password-username'
+                              type='text'
+                              placeholder={placeholder}
+                              className='w-full rounded-l-[1.25rem] border-0 bg-transparent px-4 py-3 text-[15px] leading-6 text-slate-900 placeholder-slate-400 focus:outline-none'
+                            />
+                            <CopyValueButton
+                              value={input.value}
+                              label='Username'
+                            />
+                          </div>
                         </ModalField>
                       )}
                     </Field>
@@ -129,6 +183,10 @@ const PasswordModalForm = ({
                               type={passwordShown ? "text" : "password"}
                               placeholder={placeholder}
                               className='w-full rounded-l-[1.25rem] border-0 bg-transparent px-4 py-3 text-[15px] leading-6 text-slate-900 placeholder-slate-400 focus:outline-none'
+                            />
+                            <CopyValueButton
+                              value={input.value}
+                              label='Password'
                             />
                             <button
                               type='button'

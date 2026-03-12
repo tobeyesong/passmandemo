@@ -37,24 +37,33 @@ const PasswordMeter = ({ target }) => {
 
   return (
     <div
-      className='rounded-[1.25rem] bg-slate-100 px-4 py-3'
-      style={{ boxShadow: "inset 0 0 0 1px rgba(148, 163, 184, 0.2)" }}>
-      <div className='flex items-center justify-between gap-3'>
-        <span className='text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500'>
-          Password strength
+      className='relative overflow-hidden rounded-[1.35rem] px-4 py-4'
+      style={{
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(241,245,249,0.94) 100%)",
+        boxShadow:
+          "inset 0 0 0 1px rgba(186, 200, 214, 0.26), 0 10px 24px rgba(15, 23, 42, 0.05)",
+      }}>
+      <div className='pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-white/90 via-white/30 to-transparent' />
+      <div className='relative flex items-center justify-between gap-3'>
+        <span className='text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500'>
+          Password Strength
         </span>
-        <span className='text-xs font-semibold text-slate-700'>
+        <span className='rounded-full bg-white/80 px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-[inset_0_0_0_1px_rgba(148,163,184,0.12)]'>
           {config.label}
         </span>
       </div>
-      <div className='mt-3 h-2.5 overflow-hidden rounded-full bg-slate-200'>
+      <div className='relative mt-4 h-2.5 overflow-hidden rounded-full bg-slate-200/90 shadow-[inset_0_1px_1px_rgba(255,255,255,0.75)]'>
         <div
           className='h-full rounded-full transition-all duration-500 ease-out'
           style={{
             width: config.width,
             background: config.fill,
+            boxShadow:
+              "inset 0 1px 0 rgba(255,255,255,0.45), 0 6px 16px rgba(99, 102, 241, 0.18)",
           }}
         />
+        <div className='pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/55 to-transparent' />
       </div>
     </div>
   );

@@ -1,78 +1,61 @@
 # PassMan Demo
 
-PassMan Demo is a design-focused password vault MVP built with React, Express, MongoDB, React Query, Tailwind CSS, and Algolia. The current UI is tuned around two presentation modes: a comfortable dashboard for showcasing richer cards and hierarchy, and a compact search and collection experience for larger vaults.
+PassMan Demo is a password vault MVP with a React frontend and an Express + MongoDB backend. The app supports passwords, secure notes, search, seeded demo data, and route-backed modal flows for create and edit actions.
 
-## Highlights
+## Getting Started
 
-- Password and secure note vault with create, edit, delete, and search flows
-- Comfortable dashboard cards for portfolio presentation and compact list views for scale
-- Route-backed modals for add, edit, and destructive confirmation states
-- Deterministic `demo` and `stress` seed modes for portfolio screenshots and scale testing
-- Website logos powered by `logo.dev` when available, with graceful fallbacks
-- Algolia-backed search with dedicated empty states for no-match queries
+Use Node `20.19.0` and npm `10.8.x`.
 
-## Screenshots
-
-### Comfortable Workspace
-
-The dashboard is the presentation mode: larger cards, stronger hierarchy, and quick access to the core vault actions.
-
-![Dashboard screenshot](docs/screenshots/dashboard.png)
-
-### Password Vault
-
-Passwords use branded logos, semantic actions, and clearer content hierarchy while still supporting denser collection views when the dataset grows.
-
-![Password vault screenshot](docs/screenshots/passwords.png)
-
-### Secure Notes
-
-Notes follow the same system with larger reading surfaces, strong titles, and fast edit/delete actions.
-
-![Secure notes screenshot](docs/screenshots/notes.png)
-
-### Search At Scale
-
-Search defaults to compact mode so larger result sets stay scannable. When a query returns no results, the UI falls back to dashed empty states instead of leaving large blank panels.
-
-![Search screenshot](docs/screenshots/search.png)
-
-## Local Setup
-
-1. Use Node `20.19.0` and npm `10.8.x`.
-2. Install root dependencies:
+Install the root dependencies:
 
 ```bash
 npm install
 ```
 
-3. Install frontend dependencies:
+Install the frontend dependencies:
 
 ```bash
 npm install --prefix frontend
 ```
 
-4. Add backend env vars in `.env`:
+Add your backend environment variables in `.env`:
 
 ```bash
 MONGO_URI=...
 ```
 
-You can also use the legacy `DB_USER` and `DB_PASS` pair.
+You can also use the legacy `DB_USER` and `DB_PASS` pair if needed.
 
-## Running The App
+## Available Scripts
 
-Start the backend and frontend together:
+In the project root, you can run:
 
-```bash
-npm run dev
-```
+### `npm run dev`
 
-The backend defaults to port `5050`.
+Starts the backend and frontend together.
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: `http://localhost:5050`
+
+### `npm run server`
+
+Starts the backend with `nodemon`.
+
+### `npm run client`
+
+Starts the React frontend from the root workspace.
+
+### `npm run verify`
+
+Runs the frontend test pass and then builds the frontend bundle.
+
+### `npm run build:frontend`
+
+Builds the frontend for production into `frontend/build`.
 
 ## Demo Data
 
-Import the smaller curated portfolio dataset:
+Import the smaller curated dataset:
 
 ```bash
 npm run data:import:demo
@@ -84,33 +67,41 @@ Import the larger stress dataset:
 npm run data:import:stress
 ```
 
+Import the default dataset:
+
+```bash
+npm run data:import
+```
+
 Clear seeded data:
 
 ```bash
 npm run data:destroy
 ```
 
-## Verification
+## Frontend Scripts
 
-Run the current frontend verification flow:
+If you need to work in the frontend directly, these scripts are available in `frontend/package.json`:
 
-```bash
-npm run verify
-```
+### `npm start --prefix frontend`
 
-Build the frontend only:
+Runs the frontend in development mode.
 
-```bash
-npm run build:frontend
-```
+### `npm test --prefix frontend`
+
+Launches the frontend test runner.
+
+### `npm run build --prefix frontend`
+
+Builds the frontend bundle.
 
 ## Stack
 
 - React 18
 - React Router 6
+- TanStack Query
 - Tailwind CSS
 - Headless UI
-- React Query
 - Express
 - MongoDB with Mongoose
 - Algolia
