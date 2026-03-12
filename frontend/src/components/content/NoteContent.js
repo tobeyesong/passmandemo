@@ -2,7 +2,11 @@
 
 import React, { Fragment } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { TrashIcon, PencilIcon } from "@heroicons/react/outline";
+import {
+  TrashIcon,
+  PencilIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/outline";
 import Loader from "../loader/Loader";
 import NoteState from "../emptyState/noteState";
 import { useNotesQuery } from "../../hooks/useNotes";
@@ -34,15 +38,18 @@ const PasswordContent = (props) => {
                         <li
                           key={note._id}
                           className='group relative flex col-span-1 rounded-md border-r-4 border-transparent shadow-sm transition hover:border-yellow-400'>
-                          <img
-                            alt='logo'
-                            src='https://media.publit.io/file/noun-triangle.svg'
-                            className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-                          />
+                          <div className='flex w-14 flex-shrink-0 items-center justify-center rounded-l-md bg-slate-900 text-white shadow-sm'>
+                            <DocumentTextIcon
+                              className='h-7 w-7'
+                              aria-hidden='true'
+                            />
+                          </div>
 
                           <div className='flex min-w-0 flex-1 flex-row-reverse items-center truncate rounded-r-md border border-gray-200 bg-white'>
                             <div className='flex-1 px-4 py-2 pr-12 text-sm truncate'>
-                              {note.title}
+                              <p className='font-medium text-gray-900'>
+                                {note.title}
+                              </p>
                               <p className='text-gray-500 truncate '>
                                 {note.caption}
                               </p>
