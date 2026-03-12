@@ -7,23 +7,27 @@ import SearchBar from "../navbar/SearchBar";
 import PasswordContent from "../content/PasswordContent";
 import NoteContent from "../content/NoteContent";
 import useDesktopSidebarState from "../../hooks/useDesktopSidebarState";
+import { AppBackdrop, appPageStyle } from "../app/appTheme";
 // import AddressContent from "../content/AddressContent";
 
 const DashboardScreen = () => {
   const [isSidebarCollapsed, setSidebarCollapsed] = useDesktopSidebarState();
 
   return (
-    <div className='relative flex flex-1 h-screen overflow-hidden bg-gray-100'>
-      <Sidebar isCollapsed={isSidebarCollapsed} />
-      <div className='flex flex-col flex-1 w-0 overflow-auto'>
-        <SearchBar
-          isSidebarCollapsed={isSidebarCollapsed}
-          onSidebarToggle={() => setSidebarCollapsed((current) => !current)}
-        />
+    <div className='relative flex h-screen overflow-hidden' style={appPageStyle}>
+      <AppBackdrop />
+      <div className='relative z-10 flex flex-1 overflow-hidden'>
+        <Sidebar isCollapsed={isSidebarCollapsed} />
+        <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>
+          <SearchBar
+            isSidebarCollapsed={isSidebarCollapsed}
+            onSidebarToggle={() => setSidebarCollapsed((current) => !current)}
+          />
 
-        <PasswordContent title='Passwords' />
-        <NoteContent title='Notes' />
-        {/* <AddressContent title='Addresses' /> */}
+          <PasswordContent title='Passwords' />
+          <NoteContent title='Notes' />
+          {/* <AddressContent title='Addresses' /> */}
+        </div>
       </div>
     </div>
   );

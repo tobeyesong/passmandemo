@@ -3,30 +3,48 @@
 import React from "react";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import ModalShell from "./ModalShell";
+import {
+  ModalHeader,
+  ModalSurface,
+  modalActionRowClassName,
+  modalInsetStyle,
+  modalIconButtonStyle,
+} from "./modalTheme";
 
-export default function Modal(props) {
+export default function Modal({
+  onClose,
+  eyebrow = "Confirm Action",
+  title,
+  content,
+  actions,
+}) {
   return (
-    <ModalShell onClose={props.onClose} maxWidth='max-w-lg' panelClassName='bg-white'>
-      <div className='p-6'>
-        <div className='sm:flex sm:items-start'>
-          <div className='mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10'>
-            <ExclamationIcon
-              className='h-6 w-6 text-red-600'
-              aria-hidden='true'
-            />
-          </div>
-          <div className='mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left'>
-            <h3 className='text-lg font-medium leading-6 text-gray-900'>
-              {props.title}
-            </h3>
-            <div className='mt-2'>
-              <p className='text-sm text-gray-500'>{props.content}</p>
+    <ModalShell onClose={onClose} maxWidth='max-w-2xl'>
+      <div className='p-4 sm:p-6'>
+        <ModalHeader
+          eyebrow={eyebrow}
+          title={title}
+          description='Use the stronger action only if you are certain. This step cannot be undone.'
+          tone='danger'
+        />
+
+        <ModalSurface className='space-y-6'>
+          <div className='flex items-start gap-4'>
+            <div
+              className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[1rem] bg-red-50 text-red-600'
+              style={{ ...modalInsetStyle, ...modalIconButtonStyle }}>
+              <ExclamationIcon className='h-6 w-6' aria-hidden='true' />
+            </div>
+            <div className='space-y-2'>
+              <p className='text-base font-semibold text-slate-900'>
+                Permanent change
+              </p>
+              <p className='text-sm leading-6 text-slate-600'>{content}</p>
             </div>
           </div>
-        </div>
-        <div className='mt-5 sm:mt-4 sm:flex sm:flex-row-reverse'>
-          {props.actions}
-        </div>
+
+          <div className={modalActionRowClassName}>{actions}</div>
+        </ModalSurface>
       </div>
     </ModalShell>
   );

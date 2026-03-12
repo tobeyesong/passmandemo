@@ -52,6 +52,8 @@ const AppRoutes = () => {
 
       {backgroundLocation && (
         <Routes>
+          <Route path='/passwords/add' element={<AddPasswordModal />} />
+          <Route path='/add/note' element={<AddNoteModal />} />
           <Route
             path='/password/:id/delete'
             element={<DeletePasswordModal />}

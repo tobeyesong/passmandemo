@@ -26,17 +26,16 @@ const getLogoUrl = (hostname, size) =>
     hostname
   )}?token=${LOGO_DEV_TOKEN}&size=${size}&format=png&retina=true&fallback=404`;
 
-const SiteLogo = ({ url, className }) => {
+const SiteLogo = ({ url, className, size = 56 }) => {
   const [hasError, setHasError] = useState(false);
   const hostname = useMemo(() => normalizeHostname(url), [url]);
   const initial = hostname ? hostname.charAt(0).toUpperCase() : "?";
-  const size = 56;
 
   if (!hostname || hasError) {
     return (
       <div
         aria-label='logo fallback'
-        className={`${className} flex items-center justify-center bg-yellow-500 text-xl font-semibold uppercase text-white`}>
+        className={`${className} flex items-center justify-center bg-amber-400 text-xl font-semibold uppercase text-slate-950`}>
         {initial}
       </div>
     );

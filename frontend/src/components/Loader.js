@@ -1,14 +1,8 @@
 /** @format */
 
 import React from "react";
-import { CollectionIcon } from "@heroicons/react/outline";
+import { AppLoader } from "./app/appTheme";
 
-const Loader = () => {
-  return (
-    <div className='flex justify-center '>
-      <CollectionIcon className='w-10 h-10 animate-pulse' />
-    </div>
-  );
-};
+const Loader = () => <AppLoader label='Loading search index' />;
 
 export default Loader;
