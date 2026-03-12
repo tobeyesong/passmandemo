@@ -55,7 +55,7 @@ export const appSearchFieldStyle = {
 };
 
 export const appPanelClassName =
-  "relative overflow-hidden rounded-[2rem] bg-white/80 ring-1 ring-white/70";
+  "relative min-w-0 overflow-hidden rounded-[2rem] bg-white/80 ring-1 ring-white/70";
 
 export const appActionIconButtonClassName =
   "inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white/90 text-slate-600 ring-1 ring-transparent transition duration-200 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-300";

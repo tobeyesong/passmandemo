@@ -50,9 +50,9 @@ const SearchHits = connectHits(({ hits, renderHit, emptyState }) => {
   }
 
   return (
-    <ul className='grid gap-5'>
+    <ul className='grid min-w-0 gap-5'>
       {hits.map((hit) => (
-        <li key={hit.objectID || hit._id} className='m-0 list-none'>
+        <li key={hit.objectID || hit._id} className='m-0 min-w-0 list-none'>
           {renderHit(hit)}
         </li>
       ))}
@@ -152,7 +152,7 @@ const SearchScreen = () => {
                 className='rounded-[1.85rem] bg-white/70 px-3 py-3 ring-1 ring-white/70'
                 style={appTopBarStyle}>
                 <div className='flex flex-wrap items-center gap-3 2xl:flex-nowrap'>
-                  <div className='order-1 flex flex-wrap items-center gap-3'>
+                  <div className='order-1 flex w-full flex-wrap items-center gap-3 sm:w-auto'>
                     <button
                       type='button'
                       className='hidden h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex'
@@ -179,14 +179,15 @@ const SearchScreen = () => {
                     </button>
                     <Link
                       to='/'
-                      className='inline-flex h-11 items-center justify-center gap-2 rounded-[1rem] bg-white px-4 text-sm font-semibold text-slate-700 transition duration-200 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300'
+                      className='inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-[1rem] bg-white px-4 text-sm font-semibold text-slate-700 transition duration-200 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300 sm:flex-none'
                       style={appActionButtonStyle}>
                       <HomeIcon className='h-5 w-5' aria-hidden='true' />
-                      <span>Dashboard</span>
+                      <span className='truncate'>Dashboard</span>
                     </Link>
                     <DensityToggle
                       density={density}
                       onChange={setDensity}
+                      className='ml-auto flex-shrink-0 sm:ml-0'
                     />
                   </div>
 
@@ -212,7 +213,7 @@ const SearchScreen = () => {
             </div>
 
             <main className='flex-1 overflow-auto pb-8 pt-6 focus:outline-none'>
-              <div className='grid gap-6 px-4 sm:px-6 lg:px-8'>
+              <div className='grid min-w-0 gap-6 px-4 sm:px-6 lg:px-8'>
                 <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
                   <AppSectionHeader
                     eyebrow='Search Results'

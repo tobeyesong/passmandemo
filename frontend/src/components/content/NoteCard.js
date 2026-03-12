@@ -27,19 +27,21 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
         style={appCardStyle}>
         <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
         <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-amber-200 via-cyan-200 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
-        <div className='flex min-w-0 items-center gap-3'>
-          <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[1rem] bg-sky-50 text-sky-700 ring-1 ring-sky-100'>
-            <DocumentTextIcon className='h-6 w-6' aria-hidden='true' />
+        <div className='flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center'>
+          <div className='flex min-w-0 items-center gap-3 sm:flex-1'>
+            <div className='flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[1rem] bg-sky-50 text-sky-700 ring-1 ring-sky-100'>
+              <DocumentTextIcon className='h-6 w-6' aria-hidden='true' />
+            </div>
+            <div className='min-w-0 flex-1'>
+              <h2 className='truncate text-sm font-semibold text-slate-950'>
+                {note.title}
+              </h2>
+              <p className='mt-1 truncate text-sm text-slate-600'>
+                {note.caption}
+              </p>
+            </div>
           </div>
-          <div className='min-w-0 flex-1'>
-            <h2 className='truncate text-sm font-semibold text-slate-950'>
-              {note.title}
-            </h2>
-            <p className='mt-1 truncate text-sm text-slate-600'>
-              {note.caption}
-            </p>
-          </div>
-          <div className='flex flex-shrink-0 gap-2'>
+          <div className='flex flex-shrink-0 justify-end gap-2 sm:ml-auto'>
             <Link
               to={`/note/${id}/edit`}
               state={{ backgroundLocation }}
@@ -69,7 +71,7 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
       <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
       <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-amber-200 via-cyan-200 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
 
-      <div className='absolute right-5 top-5 flex gap-2'>
+      <div className='mb-4 flex justify-end gap-2 sm:absolute sm:right-5 sm:top-5 sm:mb-0'>
         <Link
           to={`/note/${id}/edit`}
           state={{ backgroundLocation }}
@@ -94,7 +96,7 @@ const NoteCard = ({ note, backgroundLocation, compact = false }) => {
           style={appCardStyle}>
           <DocumentTextIcon className='h-8 w-8' aria-hidden='true' />
         </div>
-        <div className='min-w-0 flex-1 pr-24'>
+        <div className='min-w-0 flex-1 sm:pr-24'>
           <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
             Secure note
           </p>

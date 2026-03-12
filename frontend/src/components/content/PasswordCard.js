@@ -32,23 +32,25 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
         style={appCardStyle}>
         <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-amber-300 via-orange-300 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
         <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
-        <div className='flex min-w-0 items-center gap-3'>
-          <SiteLogo
-            url={password.url}
-            size={40}
-            className='h-12 w-12 flex-shrink-0 rounded-[1rem] bg-white p-2.5 object-contain ring-1 ring-slate-200 shadow-sm'
-          />
-          <div className='min-w-0 flex-1'>
-            <a
-              href={siteHref}
-              className='block truncate text-sm font-semibold text-slate-950 transition hover:text-slate-700'>
-              {password.url}
-            </a>
-            <p className='mt-1 truncate text-sm text-slate-600'>
-              {password.username}
-            </p>
+        <div className='flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center'>
+          <div className='flex min-w-0 items-center gap-3 sm:flex-1'>
+            <SiteLogo
+              url={password.url}
+              size={40}
+              className='h-12 w-12 flex-shrink-0 rounded-[1rem] bg-white p-2.5 object-contain ring-1 ring-slate-200 shadow-sm'
+            />
+            <div className='min-w-0 flex-1'>
+              <a
+                href={siteHref}
+                className='block truncate text-sm font-semibold text-slate-950 transition hover:text-slate-700'>
+                {password.url}
+              </a>
+              <p className='mt-1 truncate text-sm text-slate-600'>
+                {password.username}
+              </p>
+            </div>
           </div>
-          <div className='flex flex-shrink-0 gap-2'>
+          <div className='flex flex-shrink-0 justify-end gap-2 sm:ml-auto'>
             <a
               href={siteHref}
               className={`${compactActionClassName} ${actionHoverClassNames.open}`}
@@ -85,7 +87,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
       <div className='absolute inset-x-0 top-0 h-px bg-gradient-to-r from-amber-300 via-orange-300 to-sky-300 opacity-0 transition duration-200 group-hover:opacity-100' />
       <div className='absolute inset-y-0 right-0 w-px bg-gradient-to-b from-sky-300 via-cyan-200 to-amber-200 opacity-0 transition duration-200 group-hover:opacity-100' />
 
-      <div className='absolute right-5 top-5 flex gap-2'>
+      <div className='mb-4 flex justify-end gap-2 sm:absolute sm:right-5 sm:top-5 sm:mb-0'>
         <a
           href={siteHref}
           className={`${appActionIconButtonClassName} ${actionHoverClassNames.open}`}
@@ -117,7 +119,7 @@ const PasswordCard = ({ password, backgroundLocation, compact = false }) => {
           size={56}
           className='h-16 w-16 flex-shrink-0 rounded-[1.35rem] bg-white p-3 object-contain ring-1 ring-slate-200 shadow-sm'
         />
-        <div className='min-w-0 flex-1 pr-28'>
+        <div className='min-w-0 flex-1 sm:pr-28'>
           <p className='text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
             Website
           </p>
