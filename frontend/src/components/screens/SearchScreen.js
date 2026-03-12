@@ -12,6 +12,7 @@ import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   ArrowNarrowLeftIcon,
+  DocumentTextIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
 import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
@@ -236,15 +237,15 @@ function AllNotes({ hit, backgroundLocation }) {
   return (
     <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6'>
       <li className='group relative flex col-span-1 rounded-md border-r-4 border-transparent shadow-sm transition hover:border-yellow-400'>
-        <img
-          alt='logo'
-          src='https://media.publit.io/file/noun-triangle.svg'
-          className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-        />
-        <div className='flex min-w-0 flex-1 flex-row-reverse items-center truncate rounded-r-md border border-blue-200 bg-white'>
+        <div className='flex w-14 flex-shrink-0 items-center justify-center rounded-l-md bg-slate-900 text-white shadow-sm'>
+          <DocumentTextIcon className='h-7 w-7' aria-hidden='true' />
+        </div>
+        <div className='flex min-w-0 flex-1 flex-row-reverse items-center truncate rounded-r-md border border-gray-200 bg-white'>
           <div className='flex-1 px-4 py-2 pr-12 text-sm truncate'>
-            {hit.title}
-            <p className='text-gray-500 truncate h-11 '>{hit.caption}</p>
+            <p className='font-medium text-gray-900 hover:text-gray-600'>
+              {hit.title}
+            </p>
+            <p className='text-gray-500 truncate'>{hit.caption}</p>
           </div>
         </div>
         <div className='pointer-events-none absolute right-2 top-2 z-10 flex gap-1 opacity-0 translate-y-1 transition-all duration-150 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-focus-within:translate-y-0'>
