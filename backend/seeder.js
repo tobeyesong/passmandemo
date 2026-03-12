@@ -1,50 +1,52 @@
 /** @format */
 
 import dotenv from "dotenv";
-// import users from "./data/users.js";
-import passwords from "./data/passwords.js";
-// import User from "./models/userModel.js";
 import Password from "./models/passwordModel.js";
+import Note from "./models/noteModel.js";
 import connectDB from "./config/db.js";
+import { availableSeedModes, createSeedData } from "./data/seedFactory.js";
 
 dotenv.config();
 
 connectDB();
 
+const arg = process.argv[2];
+const requestedMode = availableSeedModes.includes(arg) ? arg : "demo";
+
 const importData = async () => {
   try {
     await Password.deleteMany();
+    await Note.deleteMany();
 
-    // const createdUsers = await User.insertMany(users);
-    // const adminUser = createdUsers[0]._id;
+    const { passwords, notes } = createSeedData(requestedMode);
 
-    const samplePasswords = passwords.map((passwords) => {
-      return { ...passwords };
-    });
+    await Password.insertMany(passwords);
+    await Note.insertMany(notes);
 
-    await Password.insertMany(samplePasswords);
-    console.log("data imported");
+    console.log(
+      `data imported (${requestedMode} mode: ${passwords.length} passwords, ${notes.length} notes)`
+    );
     process.exit();
   } catch (error) {
     console.error(`${error}`);
-    process.exit();
+    process.exit(1);
   }
 };
 
 const destroyData = async () => {
   try {
-    // await User.deleteMany();
     await Password.deleteMany();
+    await Note.deleteMany();
 
     console.log("data DESTROYED");
     process.exit();
   } catch (error) {
     console.error(`${error}`);
-    process.exit();
+    process.exit(1);
   }
 };
 
-if (process.argv[2] === "-d") {
+if (arg === "-d") {
   destroyData();
 } else {
   importData();

@@ -1,86 +1,109 @@
-# PassMan
+# PassMan Demo
 
-A full-stack password manager with instant search, auto-fetched company logos, and password strength analysis.
+PassMan Demo is a password vault MVP with a React frontend and an Express + MongoDB backend. The app supports passwords, secure notes, search, seeded demo data, and route-backed modal flows for create and edit actions.
 
-**[Live Demo →](https://passmandemo.herokuapp.com/)**
+## Getting Started
 
-![PassMan Screenshot](https://i.imgur.com/MxFGAKb.png)
+Use Node `20.19.0` and npm `10.8.x`.
 
----
-
-## Features
-
-### 🔐 Password Management
-Securely store credentials with URL, username, password, and notes. Company logos are automatically fetched via [Logo.dev](https://logo.dev) API for visual recognition.
-
-### 📝 Notes Management
-Create and organize secure notes with titles and content — perfect for storing sensitive information that doesn't fit the password format.
-
-### ⚡ Algolia-Powered Search
-Instant, typo-tolerant search across all passwords and notes. Results appear as you type with sub-100ms response times.
-
-- [Search Implementation](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/screens/SearchScreen.js)
-
-### 💪 Password Strength Meter
-Real-time password analysis using [zxcvbn](https://github.com/dropbox/zxcvbn) — the same library used by Dropbox. Get feedback like "WEAK", "FAIR", or "STRONG" with a visual progress bar.
-
-- [Strength Meter Code](https://github.com/tobeyesong/passmandemo/blob/master/frontend/src/components/misc/PasswordMeter.js)
-
----
-
-## Tech Stack
-
-### Frontend
-- **React 17** with Redux state management
-- **Tailwind CSS** for styling
-- **Algolia InstantSearch** for real-time search UI
-- **React Router 6** for navigation
-- **React Final Form** for form handling
-
-### Backend
-- **Node.js / Express** REST API
-- **MongoDB / Mongoose** for data persistence
-- **JWT** authentication
-- **bcrypt** password hashing
-- **Algolia** search indexing
-
-### APIs
-- **[Logo.dev](https://logo.dev)** — Company logo fetching
-- **[Algolia](https://algolia.com)** — Search-as-a-service
-
----
-
-## Screenshots
-
-### Password Strength Meter
-![Password Meter](https://i.imgur.com/MxFGAKb.png)
-
-### Algolia Search
-![Algolia Search](https://github.com/tobeyesong/passmandemo/assets/65470881/b80ef2b0-9de8-438f-a13e-22fc017f47a0)
-
----
-
-## Local Development
+Install the root dependencies:
 
 ```bash
-# Clone the repo
-git clone https://github.com/tobeyesong/passmandemo.git
-cd passmandemo
-
-# Install dependencies
 npm install
-cd frontend && npm install && cd ..
-
-# Set up environment variables
-cp .env.example .env
-# Add your MongoDB URI, JWT secret, and Algolia credentials
-
-# Run development server
-npm run dev
 ```
 
----
+Install the frontend dependencies:
 
-## License
+```bash
+npm install --prefix frontend
+```
 
-MIT
+Add your backend environment variables in `.env`:
+
+```bash
+MONGO_URI=...
+```
+
+You can also use the legacy `DB_USER` and `DB_PASS` pair if needed.
+
+## Available Scripts
+
+In the project root, you can run:
+
+### `npm run dev`
+
+Starts the backend and frontend together.
+
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: `http://localhost:5050`
+
+### `npm run server`
+
+Starts the backend with `nodemon`.
+
+### `npm run client`
+
+Starts the React frontend from the root workspace.
+
+### `npm run verify`
+
+Runs the frontend test pass and then builds the frontend bundle.
+
+### `npm run build:frontend`
+
+Builds the frontend for production into `frontend/build`.
+
+## Demo Data
+
+Import the smaller curated dataset:
+
+```bash
+npm run data:import:demo
+```
+
+Import the larger stress dataset:
+
+```bash
+npm run data:import:stress
+```
+
+Import the default dataset:
+
+```bash
+npm run data:import
+```
+
+Clear seeded data:
+
+```bash
+npm run data:destroy
+```
+
+## Frontend Scripts
+
+If you need to work in the frontend directly, these scripts are available in `frontend/package.json`:
+
+### `npm start --prefix frontend`
+
+Runs the frontend in development mode.
+
+### `npm test --prefix frontend`
+
+Launches the frontend test runner.
+
+### `npm run build --prefix frontend`
+
+Builds the frontend bundle.
+
+## Stack
+
+- React 18
+- React Router 6
+- TanStack Query
+- Tailwind CSS
+- Headless UI
+- Express
+- MongoDB with Mongoose
+- Algolia
+- Faker
+- zxcvbn

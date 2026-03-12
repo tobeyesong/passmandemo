@@ -1,118 +1,188 @@
 /** @format */
 
-import React, { Fragment, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  TrashIcon,
-  PencilIcon,
-  ChevronDoubleUpIcon,
-} from "@heroicons/react/outline";
-import Loader from "../loader/Loader";
-import { listPasswords } from "../../actions/passwordActions";
-
+import React, { useDeferredValue, useMemo, useState } from "react";
+import { FingerPrintIcon } from "@heroicons/react/outline";
+import { useLocation } from "react-router-dom";
 import PasswordState from "../emptyState/passwordState";
+import {
+  AppDashedEmptyState,
+  AppEmptyState,
+  AppLoader,
+  AppMetaNote,
+  AppPrimaryLink,
+} from "../app/appTheme";
+import { usePasswordsQuery } from "../../hooks/usePasswords";
+import CollectionSection from "./CollectionSection";
+import PasswordCard from "./PasswordCard";
+import CollectionControls from "./CollectionControls";
 
-//Toastify
-import { ToastContainer } from "react-toastify";
+const filterOptions = [
+  { value: "all", label: "All passwords" },
+  { value: "withNotes", label: "With notes" },
+  { value: "withoutNotes", label: "Without notes" },
+];
 
-const PasswordContent = (props) => {
-  const dispatch = useDispatch();
-  const passwordList = useSelector((state) => state.passwordList);
-  const { loading, error, passwords } = passwordList;
+const sortOptions = [
+  { value: "recent", label: "Newest first" },
+  { value: "oldest", label: "Oldest first" },
+  { value: "site", label: "Sort by site" },
+  { value: "username", label: "Sort by username" },
+];
 
-  useEffect(() => {
-    dispatch(listPasswords());
-  }, [dispatch]);
+const getTimestamp = (item) => {
+  if (item.updatedAt) {
+    return new Date(item.updatedAt).getTime();
+  }
+
+  if (item.createdAt) {
+    return new Date(item.createdAt).getTime();
+  }
+
+  return 0;
+};
+
+const PasswordContent = ({
+  title,
+  density = "comfortable",
+  showControls = false,
+}) => {
+  const location = useLocation();
+  const {
+    data: passwords = [],
+    isLoading,
+    error,
+  } = usePasswordsQuery();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterValue, setFilterValue] = useState("all");
+  const [sortValue, setSortValue] = useState("recent");
+  const deferredSearch = useDeferredValue(searchTerm.trim().toLowerCase());
+  const compact = density === "compact";
+
+  const filteredPasswords = useMemo(() => {
+    const nextPasswords = [...passwords]
+      .filter((password) => {
+        if (!showControls) {
+          return true;
+        }
+
+        const haystack = [
+          password.url,
+          password.username,
+          password.notes,
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        const matchesSearch = deferredSearch
+          ? haystack.includes(deferredSearch)
+          : true;
+
+        const hasNotes = Boolean(password.notes?.trim());
+        const matchesFilter =
+          filterValue === "all"
+            ? true
+            : filterValue === "withNotes"
+            ? hasNotes
+            : !hasNotes;
+
+        return matchesSearch && matchesFilter;
+      })
+      .sort((left, right) => {
+        switch (sortValue) {
+          case "oldest":
+            return getTimestamp(left) - getTimestamp(right);
+          case "site":
+            return left.url.localeCompare(right.url);
+          case "username":
+            return left.username.localeCompare(right.username);
+          case "recent":
+          default:
+            return getTimestamp(right) - getTimestamp(left);
+        }
+      });
+
+    return nextPasswords;
+  }, [deferredSearch, filterValue, passwords, showControls, sortValue]);
+
+  const action = (
+    <AppPrimaryLink
+      to='/passwords/add'
+      state={{ backgroundLocation: location }}>
+      <FingerPrintIcon className='h-5 w-5' aria-hidden='true' />
+      Add Password
+    </AppPrimaryLink>
+  );
 
   return (
-    <div>
-      <main className='relative flex-1 overflow-y-auto focus:outline-none'>
-        <div className='py-6'>
-          <div className='px-4 mx-auto max-w-7xl sm:px-6 md:px-8'>
-            <div>
-              <ToastContainer autoClose={2000} />
-              <h1 className='text-2xl font-semibold text-gray-900'>
-                {props.title}
-              </h1>
-              <Fragment>
-                {loading ? (
-                  <Loader />
-                ) : error ? (
-                  <h3 className='animate-pulse'>{error}</h3>
-                ) : passwords.length === 0 ? (
-                  <PasswordState />
-                ) : (
-                  <Fragment>
-                    <ul className='grid grid-cols-1 gap-5 mt-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4 group'>
-                      {passwords.map((password) => (
-                        <div key={password._id}>
-                          <div className='border-r-4 rounded-md hover:border-yellow-400'>
-                            <li className='flex col-span-1 rounded-md shadow-sm'>
-                              <img
-                                alt='logo '
-                                src={`https://img.logo.dev/${password.url}?token=pk_H82lg8wdSsOq6I1XLEFkyg`}
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src =
-                                    "https://media.publit.io/file/MiscPasswordIcon.svg";
-                                }}
-                                className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-                              />
+    <main className='relative flex-1 overflow-auto pb-8 pt-6 focus:outline-none'>
+      <CollectionSection
+        eyebrow='Vault Feature'
+        title={title}
+        description='Store the site, username, and supporting details in a layout that keeps the critical login info easy to scan.'
+        count={passwords.length}
+        action={action}>
+        {isLoading ? (
+          <AppLoader label='Loading passwords' />
+        ) : error ? (
+          <AppEmptyState
+            eyebrow='Load Error'
+            icon={FingerPrintIcon}
+            title='Passwords could not be loaded'
+            description={error.message}
+          />
+        ) : passwords.length === 0 ? (
+          <PasswordState />
+        ) : (
+          <React.Fragment>
+            {showControls ? (
+              <CollectionControls
+                searchValue={searchTerm}
+                onSearchChange={setSearchTerm}
+                searchPlaceholder='Search sites, usernames, or saved notes'
+                filterValue={filterValue}
+                onFilterChange={setFilterValue}
+                filterOptions={filterOptions}
+                sortValue={sortValue}
+                onSortChange={setSortValue}
+                sortOptions={sortOptions}
+                summary={`Showing ${filteredPasswords.length} of ${passwords.length}`}
+              />
+            ) : null}
 
-                              <div className='flex flex-row-reverse items-center flex-1 truncate bg-white border-t border-b border-r border-gray-200 rounded-r-md'>
-                                <div className='flex-1 px-4 py-2 text-sm truncate'>
-                                  <a
-                                    href={password.href}
-                                    className='font-medium text-gray-900 hover:text-gray-600'>
-                                    {password.username}
-                                  </a>
-                                  <p className='text-gray-500 '>
-                                    {password.url}
-                                  </p>
-                                </div>
-                                <div className='absolute flex-shrink-0 m-2 transform scale-0 group-hover:scale-100 '>
-                                  <a
-                                    href={`https://${password.url}`}
-                                    className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                                    <ChevronDoubleUpIcon
-                                      className='w-5 h-5 text-gray-400 rounded hover:bg-blue-700 hover:text-gray-100'
-                                      aria-hidden='true'
-                                    />
-                                  </a>
-                                  <Link
-                                    to={`/password/${password._id}/edit`}
-                                    type='button'
-                                    className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                                    <PencilIcon
-                                      className='w-5 h-5 text-gray-400 rounded hover:bg-gray-800 hover:text-gray-100'
-                                      aria-hidden='true'
-                                    />
-                                  </Link>
-                                  <Link
-                                    to={`/password/${password._id}/delete`}
-                                    type='button'
-                                    className='inline-flex items-center justify-center w-8 h-8 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                                    <TrashIcon
-                                      className='w-5 h-5 text-gray-400 rounded hover:bg-red-600 hover:text-gray-100'
-                                      aria-hidden='true'
-                                    />
-                                  </Link>
-                                </div>
-                              </div>
-                            </li>
-                          </div>
-                        </div>
-                      ))}
-                    </ul>{" "}
-                  </Fragment>
-                )}
-              </Fragment>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+            <AppMetaNote className={showControls ? "mt-3" : null}>
+              Site logos use logo.dev when available. If a logo is missing, the
+              vault falls back to the site initial.
+            </AppMetaNote>
+
+            {filteredPasswords.length === 0 ? (
+              <AppDashedEmptyState
+                icon={FingerPrintIcon}
+                title='No passwords match the current view'
+                description='Try clearing the search, changing the filter, or switching to a broader sort to bring more entries back into view.'
+                className='mt-6'
+              />
+            ) : (
+              <ul
+                className={`mt-6 grid grid-cols-1 ${
+                  compact
+                    ? "gap-3 xl:grid-cols-2 2xl:grid-cols-3"
+                    : "gap-5 lg:grid-cols-2 2xl:grid-cols-3"
+                }`}>
+                {filteredPasswords.map((password) => (
+                  <li key={password._id}>
+                    <PasswordCard
+                      password={password}
+                      backgroundLocation={location}
+                      compact={compact}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </React.Fragment>
+        )}
+      </CollectionSection>
+    </main>
   );
 };
 

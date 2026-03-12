@@ -1,17 +1,80 @@
 /** @format */
 
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
 import App from "./App";
+import queryClient from "./lib/queryClient";
 
-//REDUX
-import { Provider } from "react-redux";
-import store from "./store";
-ReactDOM.render(
-  <Provider store={store}>
+if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
+  if ("ResizeObserver" in window) {
+    const NativeResizeObserver = window.ResizeObserver;
+
+    window.ResizeObserver = class ResizeObserver extends NativeResizeObserver {
+      constructor(callback) {
+        super((entries, observer) => {
+          window.requestAnimationFrame(() => callback(entries, observer));
+        });
+      }
+    };
+  }
+
+  const resizeObserverError =
+    /ResizeObserver loop (completed with undelivered notifications|limit exceeded)/;
+  const isResizeObserverMessage = (value) =>
+    typeof value === "string" && resizeObserverError.test(value);
+
+  const suppressResizeObserverOverlay = (event) => {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  };
+
+  window.addEventListener(
+    "error",
+    (event) => {
+      const message = event.message || event.error?.message;
+
+      if (isResizeObserverMessage(message)) {
+        suppressResizeObserverOverlay(event);
+      }
+    },
+    true
+  );
+
+  window.addEventListener(
+    "unhandledrejection",
+    (event) => {
+      const reason =
+        typeof event.reason === "string"
+          ? event.reason
+          : event.reason?.message;
+
+      if (isResizeObserverMessage(reason)) {
+        suppressResizeObserverOverlay(event);
+      }
+    },
+    true
+  );
+
+  const originalConsoleError = console.error;
+  console.error = (...args) => {
+    const [firstArg] = args;
+    const message =
+      typeof firstArg === "string" ? firstArg : firstArg?.message || "";
+
+    if (isResizeObserverMessage(message)) {
+      return;
+    }
+    originalConsoleError(...args);
+  };
+}
+
+const root = createRoot(document.getElementById("root"));
+
+root.render(
+  <QueryClientProvider client={queryClient}>
     <App />
-  </Provider>,
-  document.getElementById("root")
+  </QueryClientProvider>
 );

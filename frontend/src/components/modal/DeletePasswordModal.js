@@ -1,70 +1,53 @@
 /** @format */
+
 import React from "react";
-import { useRef, useState, useEffect } from "react";
-
-//REDUX
-import { useDispatch, useSelector } from "react-redux";
-import { Navigate, Link, useParams, useNavigate } from "react-router-dom";
-import { deletePassword } from "../../actions/passwordActions";
-import { PASSWORD_DELETE_RESET } from "../../constants/passwordConstants";
-
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import StandardModal from "./StandardModal";
+import { useDeletePasswordMutation } from "../../hooks/usePasswords";
+import {
+  modalDangerButtonClassName,
+  modalDangerButtonStyle,
+  modalSecondaryButtonClassName,
+} from "./modalTheme";
 
-const DeletePasswordModal = ({ history }) => {
-  const dispatch = useDispatch();
-  const passwordId = useParams();
+const DeletePasswordModal = () => {
+  const { id } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(true);
-  const cancelButtonRef = useRef(null);
+  const deletePasswordMutation = useDeletePasswordMutation();
+  const closeTo = location.state?.backgroundLocation?.pathname || "/passwords";
+  const handleClose = () => navigate(closeTo);
 
-  const passwordDelete = useSelector((state) => state.passwordDelete);
-  const {
-    // loading: loadingDelete,
-    // error: errorDelete,
-    success: successDelete,
-  } = passwordDelete;
-  const passwordDetails = useSelector((state) => state.passwordDetails);
-  const { password } = passwordDetails;
-
-  useEffect(() => {
-    if (successDelete) {
-      dispatch({ type: PASSWORD_DELETE_RESET });
-      navigate("/");
-    }
-  }, [dispatch, history, navigate, passwordId, password, successDelete]);
-
-  if (!open) {
-    return <Navigate to='/' />;
-  }
-
-  const deleteHandler = (id) => {
-    dispatch(deletePassword(id));
+  const deleteHandler = async () => {
+    await deletePasswordMutation.mutateAsync(id);
+    navigate(closeTo);
   };
 
   const actions = (
     <React.Fragment>
       <button
         type='button'
-        className='inline-flex justify-center w-full px-4 py-2 text-base font-medium text-white bg-red-600 border border-transparent rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm'
-        onClick={() => deleteHandler(passwordId.id)}>
-        Delete
-      </button>
-      <Link
-        to='/passwords'
-        type='button'
-        className='inline-flex justify-center w-full px-4 py-2 mt-3 text-base font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm'
-        onClick={() => setOpen(false)}
-        ref={cancelButtonRef}>
+        className={modalSecondaryButtonClassName}
+        onClick={handleClose}>
         Cancel
-      </Link>
+      </button>
+      <button
+        type='button'
+        disabled={deletePasswordMutation.isPending}
+        className={modalDangerButtonClassName}
+        style={modalDangerButtonStyle}
+        onClick={deleteHandler}>
+        {deletePasswordMutation.isPending ? "Deleting..." : "Delete"}
+      </button>
     </React.Fragment>
   );
 
   return (
     <div>
       <StandardModal
+        onClose={handleClose}
         title='Delete Password'
-        content='Are you sure you want to delete this password?'
+        content='Are you sure you want to delete this password? The stored URL, username, and notes will be removed from the vault.'
         actions={actions}
       />
     </div>

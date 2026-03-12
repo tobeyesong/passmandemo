@@ -1,22 +1,41 @@
 /** @format */
-/** @format */
 
-import React from "react";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../navbar/Sidebar";
 import Loader from "../Loader";
-
+import Button from "../Button";
 import {
-  TrashIcon,
-  PencilIcon,
-  ChevronDoubleUpIcon,
-  ArrowNarrowLeftIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  DocumentTextIcon,
+  FingerPrintIcon,
+  HomeIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
-import { InstantSearch, SearchBox, Hits, Index } from "react-instantsearch-dom";
-import axios from "axios";
-import Title from "../misc/Title";
+import {
+  InstantSearch,
+  SearchBox,
+  Index,
+  connectHits,
+} from "react-instantsearch-dom";
+import { useNotesQuery } from "../../hooks/useNotes";
+import { usePasswordsQuery } from "../../hooks/usePasswords";
+import useDesktopSidebarState from "../../hooks/useDesktopSidebarState";
+import {
+  AppBackdrop,
+  AppDashedEmptyState,
+  AppMetaNote,
+  AppPanel,
+  AppSectionHeader,
+  appActionButtonStyle,
+  appPageStyle,
+  appSearchFieldStyle,
+  appTopBarStyle,
+} from "../app/appTheme";
+import DensityToggle from "../app/DensityToggle";
+import PasswordCard from "../content/PasswordCard";
+import NoteCard from "../content/NoteCard";
 
 const searchClient = algoliasearch(
   "BC38Z1AKHU",
@@ -25,44 +44,63 @@ const searchClient = algoliasearch(
 const passwordIndex = searchClient.initIndex("passwordDemo");
 const noteIndex = searchClient.initIndex("noteDemo");
 
-const SearchScreen = () => {
-  const [passwords, setPasswords] = useState([]);
-  const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const SearchHits = connectHits(({ hits, renderHit, emptyState }) => {
+  if (!hits.length) {
+    return emptyState;
+  }
 
-  useEffect(() => {
-    setLoading(true);
-    const fetchData = async () => {
-      try {
-        const [passwordResponse, noteResponse] = await Promise.all([
-          axios.get("/api/passwords"),
-          axios.get("/api/notes"),
-        ]);
-        const passwordData = passwordResponse.data.map((password) => {
-          return { ...password, objectID: password._id };
-        });
-        const noteData = noteResponse.data.map((note) => {
-          return { ...note, objectID: note._id };
-        });
-        setPasswords(passwordData);
-        setNotes(noteData);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching data: ", err);
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  return (
+    <ul className='grid gap-5'>
+      {hits.map((hit) => (
+        <li key={hit.objectID || hit._id} className='m-0 list-none'>
+          {renderHit(hit)}
+        </li>
+      ))}
+    </ul>
+  );
+});
+
+const SearchScreen = () => {
+  const location = useLocation();
+  const [isSidebarCollapsed, setSidebarCollapsed] = useDesktopSidebarState();
+  const [density, setDensity] = useState("compact");
+  const {
+    data: passwordResults = [],
+    isLoading: passwordsLoading,
+    error: passwordsError,
+  } = usePasswordsQuery();
+  const {
+    data: noteResults = [],
+    isLoading: notesLoading,
+    error: notesError,
+  } = useNotesQuery();
+
+  const passwords = useMemo(
+    () =>
+      passwordResults.map((password) => ({
+        ...password,
+        objectID: password._id,
+      })),
+    [passwordResults]
+  );
+  const notes = useMemo(
+    () =>
+      noteResults.map((note) => ({
+        ...note,
+        objectID: note._id,
+      })),
+    [noteResults]
+  );
+  const loading = passwordsLoading || notesLoading;
+  const error = passwordsError || notesError;
 
   useEffect(() => {
     if (passwords.length > 0) {
       passwordIndex
         .saveObjects(passwords)
-        .then(() => console.log("Passwords indexed successfully"))
-        .catch((err) => console.error("Error indexing passwords: ", err));
+        .catch((indexError) =>
+          console.error("Error indexing passwords:", indexError)
+        );
     }
   }, [passwords]);
 
@@ -70,184 +108,178 @@ const SearchScreen = () => {
     if (notes.length > 0) {
       noteIndex
         .saveObjects(notes)
-        .then(() => console.log("Notes indexed successfully"))
-        .catch((err) => console.error("Error indexing notes: ", err));
+        .catch((indexError) => console.error("Error indexing notes:", indexError));
     }
   }, [notes]);
 
-  //Replace all objects in the index - Slow method at scale
-  // useEffect(() => {
-  //   if (passwords.length > 0) {
-  //     passwordIndex
-  //       .replaceAllObjects(passwords)
-  //       .then(() => console.log("Passwords re-indexed successfully"))
-  //       .catch((err) => console.error("Error re-indexing passwords: ", err));
-  //   }
-  // }, [passwords]);
-
-  // useEffect(() => {
-  //   if (notes.length > 0) {
-  //     noteIndex
-  //       .replaceAllObjects(notes)
-  //       .then(() => console.log("Notes re-indexed successfully"))
-  //       .catch((err) => console.error("Error re-indexing notes: ", err));
-  //   }
-  // }, [notes]);
-  if (loading)
+  if (loading) {
     return (
-      <main className='relative flex-1 overflow-y-auto focus:outline-none'>
-        <div className='py-6'>
-          <div className='px-4 mx-auto max-w-7xl sm:px-6 md:px-8'>
-            <Loader />
-          </div>
+      <div className='relative flex h-screen overflow-hidden' style={appPageStyle}>
+        <AppBackdrop />
+        <div className='relative z-10 flex flex-1 items-center justify-center px-4'>
+          <Loader />
         </div>
-      </main>
+      </div>
     );
-  if (error) return <div>Error: {error}</div>;
+  }
+
+  if (error) {
+    return (
+      <div className='relative flex h-screen overflow-hidden' style={appPageStyle}>
+        <AppBackdrop />
+        <div className='relative z-10 flex flex-1 items-center justify-center px-4'>
+          <AppPanel className='max-w-xl px-6 py-8 sm:px-8'>
+            <AppSectionHeader
+              eyebrow='Load Error'
+              title='Search is unavailable'
+              description={error.message}
+            />
+          </AppPanel>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className='relative flex flex-1 h-screen overflow-hidden bg-gray-100'>
-      <Sidebar />
-      <div className='flex flex-col flex-1 w-0 overflow-auto'>
-        <InstantSearch indexName='passwordDemo' searchClient={searchClient}>
-          <div className='app'>
-            <div className=''>
-              <div className='flex'>
-                <Link
-                  to='/'
-                  className='inline-flex items-center px-4 text-gray-500 transition duration-200 ease-in transform border-r border-gray-200 shadow-lg focus:shadow-inner rounded-l-md focus:outline-none md:hidden'>
-                  <ArrowNarrowLeftIcon
-                    className='items-center w-6 h-6'
-                    aria-hidden='true'
-                  />
-                </Link>
-                <SearchBox
-                  className='w-full '
-                  autoFocus
-                  translations={{
-                    placeholder: "Search Everything",
-                  }}
-                />
-              </div>
-              <div className='px-4 mx-auto max-w-7xl sm:px-6 lg:px-8'>
-                <div className='max-w-5xl mx-auto'>
-                  <Title title='Passwords' />
-                  <Index indexName='passwordDemo'>
-                    <Hits hitComponent={allPasswords} />
-                  </Index>
-                  <Title title='Notes' />
-                  <Index indexName='noteDemo'>
-                    <Hits hitComponent={allNotes} />
-                  </Index>
+    <div className='relative flex h-screen overflow-hidden' style={appPageStyle}>
+      <AppBackdrop />
+      <div className='relative z-10 flex flex-1 overflow-hidden'>
+        <Sidebar isCollapsed={isSidebarCollapsed} />
+        <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>
+          <InstantSearch indexName='passwordDemo' searchClient={searchClient}>
+            <div className='px-4 pt-4 sm:px-6 lg:px-8'>
+              <div
+                className='rounded-[1.85rem] bg-white/70 px-3 py-3 ring-1 ring-white/70'
+                style={appTopBarStyle}>
+                <div className='flex flex-wrap items-center gap-3 2xl:flex-nowrap'>
+                  <div className='order-1 flex flex-wrap items-center gap-3'>
+                    <button
+                      type='button'
+                      className='hidden h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex'
+                      style={appActionButtonStyle}
+                      onClick={() =>
+                        setSidebarCollapsed((current) => !current)
+                      }>
+                      <span className='sr-only'>
+                        {isSidebarCollapsed
+                          ? "Expand sidebar"
+                          : "Collapse sidebar"}
+                      </span>
+                      {isSidebarCollapsed ? (
+                        <ChevronDoubleRightIcon
+                          className='h-5 w-5'
+                          aria-hidden='true'
+                        />
+                      ) : (
+                        <ChevronDoubleLeftIcon
+                          className='h-5 w-5'
+                          aria-hidden='true'
+                        />
+                      )}
+                    </button>
+                    <Link
+                      to='/'
+                      className='inline-flex h-11 items-center justify-center gap-2 rounded-[1rem] bg-white px-4 text-sm font-semibold text-slate-700 transition duration-200 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300'
+                      style={appActionButtonStyle}>
+                      <HomeIcon className='h-5 w-5' aria-hidden='true' />
+                      <span>Dashboard</span>
+                    </Link>
+                    <DensityToggle
+                      density={density}
+                      onChange={setDensity}
+                    />
+                  </div>
+
+                  <div className='order-2 min-w-0 basis-full 2xl:flex-1'>
+                    <p className='mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500'>
+                      Search The Vault
+                    </p>
+                    <div
+                      className='rounded-[1.5rem] bg-slate-100/90 px-4 py-2'
+                      style={appSearchFieldStyle}>
+                      <SearchBox
+                        className='vault-search'
+                        autoFocus
+                        translations={{
+                          placeholder:
+                            "Search passwords, notes, and domains",
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </InstantSearch>
+
+            <main className='flex-1 overflow-auto pb-8 pt-6 focus:outline-none'>
+              <div className='grid gap-6 px-4 sm:px-6 lg:px-8'>
+                <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
+                  <AppSectionHeader
+                    eyebrow='Search Results'
+                    title='Passwords'
+                    description='Matching credentials appear here as you type.'
+                  />
+                  <AppMetaNote className='mt-4'>
+                    Site logos use logo.dev when available. If a logo is
+                    missing, the vault falls back to the site initial.
+                  </AppMetaNote>
+                  <div className='mt-8'>
+                    <Index indexName='passwordDemo'>
+                      <SearchHits
+                        emptyState={
+                          <AppDashedEmptyState
+                            icon={FingerPrintIcon}
+                            title='No passwords match this search'
+                            description='Try another domain, username, or broader keyword to surface more saved credentials.'
+                          />
+                        }
+                        renderHit={(hit) => (
+                          <PasswordCard
+                            password={hit}
+                            backgroundLocation={location}
+                            compact={density === "compact"}
+                          />
+                        )}
+                      />
+                    </Index>
+                  </div>
+                </AppPanel>
+
+                <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
+                  <AppSectionHeader
+                    eyebrow='Search Results'
+                    title='Notes'
+                    description='Matching secure notes appear here as you type.'
+                  />
+                  <div className='mt-8'>
+                    <Index indexName='noteDemo'>
+                      <SearchHits
+                        emptyState={
+                          <AppDashedEmptyState
+                            icon={DocumentTextIcon}
+                            title='No notes match this search'
+                            description='Try another keyword or broaden the query to bring matching secure notes back into view.'
+                          />
+                        }
+                        renderHit={(hit) => (
+                          <NoteCard
+                            note={hit}
+                            backgroundLocation={location}
+                            compact={density === "compact"}
+                          />
+                        )}
+                      />
+                    </Index>
+                  </div>
+                </AppPanel>
+              </div>
+            </main>
+          </InstantSearch>
+          <Button />
+        </div>
       </div>
     </div>
   );
 };
-
-function allPasswords({ hit }) {
-  return (
-    <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6 group'>
-      <div className='border-r-4 rounded-md hover:border-yellow-400'>
-        <li className='flex col-span-1 rounded-md shadow-sm'>
-          <img
-            alt='logo '
-            src={`https://img.logo.dev/${hit.url}?token=pk_H82lg8wdSsOq6I1XLEFkyg`}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src =
-                "https://media.publit.io/file/MiscPasswordIcon.svg";
-            }}
-            className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-          />
-          <div className='flex flex-row-reverse items-center flex-1 truncate bg-white border-t border-b border-r border-gray-200 rounded-r-md'>
-            <div className='flex-1 px-4 py-2 text-sm truncate'>
-              <a
-                href={hit.href}
-                className='font-medium text-gray-900 hover:text-gray-600'>
-                {hit.username}
-              </a>
-              <p className='text-gray-500 '>{hit.url}</p>
-            </div>
-            <div className='absolute flex-shrink-0 m-2 transform scale-0 group-hover:scale-100 '>
-              <a
-                href={`https://${hit.url}`}
-                className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <ChevronDoubleUpIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-blue-700 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </a>
-              <Link
-                to={`/password/${hit.objectID}/edit`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <PencilIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-gray-800 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-              <Link
-                to={`/password/${hit.objectID}/delete`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <TrashIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-red-600 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-            </div>
-          </div>
-        </li>
-      </div>
-    </ul>
-  );
-}
-
-function allNotes({ hit }) {
-  return (
-    <ul className='grid grid-cols-1 gap-5 mt-3 mb-3 overflow-auto sm:gap-6 group'>
-      <div className='border-r-4 rounded-md hover:border-yellow-400'>
-        <li className='flex col-span-1 border-4 rounded-md shadow-sm border-gray-50'>
-          <img
-            alt='logo'
-            src='https://media.publit.io/file/noun-triangle.svg'
-            className='flex items-center flex-shrink-0 object-contain text-sm font-medium text-white shadow-sm w-14 rounded-l-md'
-          />
-          <div className='flex flex-row-reverse items-center flex-1 truncate bg-white border-t border-b border-r border-blue-200 rounded-r-md'>
-            <div className='flex-1 px-4 py-2 text-sm truncate'>
-              {hit.title}
-              <p className='text-gray-500 truncate h-11 '>{hit.caption}</p>
-            </div>
-            <div className='absolute flex-shrink-0 m-2 transform scale-0 group-hover:scale-100 '>
-              <Link
-                to={`/note/${hit.objectID}/edit`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 mr-1 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <PencilIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-gray-800 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-              <Link
-                to={`/note/${hit.objectID}/delete`}
-                type='button'
-                className='inline-flex items-center justify-center w-8 h-8 text-gray-400 bg-transparent bg-gray-100 rounded-full hover:text-gray-500 focus:outline-none '>
-                <TrashIcon
-                  className='w-5 h-5 text-gray-400 rounded hover:bg-red-600 hover:text-gray-100'
-                  aria-hidden='true'
-                />
-              </Link>
-            </div>
-          </div>
-        </li>
-      </div>
-    </ul>
-  );
-}
 
 export default SearchScreen;

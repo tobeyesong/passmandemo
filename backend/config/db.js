@@ -3,20 +3,25 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  try {
-    const conn = await mongoose.connect(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jcidy.mongodb.net/passManDemo?retryWrites=true&w=majority`,
-      {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-      }
-    );
+  const hasMongoUri = Boolean(process.env.MONGO_URI);
+  const hasLegacyCredentials = Boolean(
+    process.env.DB_USER && process.env.DB_PASS
+  );
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`Error: ${error.message}`);
-    process.exit(1);
+  if (!hasMongoUri && !hasLegacyCredentials) {
+    throw new Error(
+      "Missing MongoDB configuration. Set MONGO_URI or both DB_USER and DB_PASS in .env."
+    );
   }
+
+  const mongoUri =
+    process.env.MONGO_URI ||
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jcidy.mongodb.net/passManDemo?retryWrites=true&w=majority`;
+
+  const conn = await mongoose.connect(mongoUri);
+
+  console.log(`MongoDB Connected: ${conn.connection.host}`);
+  return conn;
 };
 
 export default connectDB;

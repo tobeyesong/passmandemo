@@ -10,8 +10,6 @@ import noteRoutes from "./routes/noteRoutes.js";
 
 dotenv.config();
 
-connectDB();
-
 const app = express();
 
 app.use(express.json());
@@ -37,8 +35,19 @@ app.use(notFound);
 
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
-app.listen(PORT, function () {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+const startServer = async () => {
+  await connectDB();
+
+  app.listen(PORT, function () {
+    console.log(
+      `Server running in ${process.env.NODE_ENV} mode on port ${PORT}`
+    );
+  });
+};
+
+startServer().catch((error) => {
+  console.error(`Startup error: ${error.message}`);
+  process.exit(1);
 });
