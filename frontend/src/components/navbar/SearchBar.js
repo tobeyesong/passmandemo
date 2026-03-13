@@ -107,42 +107,32 @@ const SearchBar = ({
             <div
               className='relative flex w-full max-w-xs flex-1 flex-col overflow-hidden'
               style={appSidebarStyle}>
-              <Transition.Child
-                as={Fragment}
-                enter='ease-in-out duration-300'
-                enterFrom='opacity-0'
-                enterTo='opacity-100'
-                leave='ease-in-out duration-300'
-                leaveFrom='opacity-100'
-                leaveTo='opacity-0'>
-                <div className='absolute right-4 top-4'>
+              <div className='border-b border-white/10 px-5 pb-6 pt-7'>
+                <div className='flex items-start gap-3'>
+                  <div className='group flex min-w-0 flex-1 items-center gap-3 rounded-[1.75rem] bg-white/5 p-3 ring-1 ring-white/10'>
+                    <div className='flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-white text-slate-950 shadow-[0_12px_30px_rgba(15,23,42,0.18)]'>
+                      <img
+                        className='h-8 w-auto transition-transform duration-700 ease-out motion-safe:group-hover:animate-spin'
+                        src='https://media.publit.io/file/noun_vault_3097826-2.svg'
+                        alt='PassMan'
+                      />
+                    </div>
+                    <div className='min-w-0'>
+                      <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200'>
+                        Secure Vault
+                      </p>
+                      <p className='mt-1 truncate text-lg font-semibold text-white'>
+                        PassMan
+                      </p>
+                    </div>
+                  </div>
                   <button
                     type='button'
-                    className='flex h-10 w-10 items-center justify-center rounded-[1rem] bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-amber-300'
+                    className='mt-1 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[1rem] bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-amber-300'
                     onClick={() => setSidebarOpen(false)}>
                     <span className='sr-only'>Close sidebar</span>
                     <XIcon className='h-5 w-5' aria-hidden='true' />
                   </button>
-                </div>
-              </Transition.Child>
-
-              <div className='border-b border-white/10 px-5 pb-6 pt-7'>
-                <div className='group flex items-center gap-3 rounded-[1.75rem] bg-white/5 p-3 ring-1 ring-white/10'>
-                  <div className='flex h-12 w-12 items-center justify-center rounded-[1.2rem] bg-white text-slate-950 shadow-[0_12px_30px_rgba(15,23,42,0.18)]'>
-                    <img
-                      className='h-8 w-auto transition-transform duration-700 ease-out motion-safe:group-hover:animate-spin'
-                      src='https://media.publit.io/file/noun_vault_3097826-2.svg'
-                      alt='PassMan'
-                    />
-                  </div>
-                  <div className='min-w-0'>
-                    <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200'>
-                      Secure Vault
-                    </p>
-                    <p className='mt-1 truncate text-lg font-semibold text-white'>
-                      PassMan
-                    </p>
-                  </div>
                 </div>
               </div>
 

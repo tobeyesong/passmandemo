@@ -90,19 +90,19 @@ const Sidebar = ({ isCollapsed = false }) => {
                     "group relative flex items-center rounded-[1.35rem] px-3 py-3 text-sm font-medium transition duration-200",
                     isCollapsed ? "justify-center" : "gap-3",
                     active
-                      ? "bg-white/10 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]"
+                      ? "bg-white/10 text-white"
                       : "text-slate-300 hover:bg-white/5 hover:text-white"
                   )}>
                   {active ? (
                     <span className='absolute left-0 top-1/2 h-8 w-1 -translate-y-1/2 rounded-r-full bg-amber-300' />
                   ) : null}
                   <span
-                      className={classNames(
-                        "flex h-10 w-10 items-center justify-center rounded-[1rem] transition",
-                        active
+                    className={classNames(
+                      "flex h-10 w-10 items-center justify-center rounded-[1rem] transition",
+                      active
                         ? "bg-white/10 text-amber-200"
                         : "bg-white/5 text-slate-300 group-hover:bg-white/10 group-hover:text-white"
-                      )}>
+                    )}>
                     <item.icon className='h-5 w-5' aria-hidden='true' />
                   </span>
                   {!isCollapsed ? (
@@ -116,18 +116,6 @@ const Sidebar = ({ isCollapsed = false }) => {
               );
             })}
           </nav>
-
-          {!isCollapsed ? (
-            <div className='rounded-[1.5rem] bg-white/5 p-4 text-sm text-slate-300 ring-1 ring-white/10'>
-              <p className='text-[11px] font-semibold uppercase tracking-[0.26em] text-amber-200'>
-                Vault Tip
-              </p>
-              <p className='mt-3 leading-6 text-slate-300/90'>
-                Use passwords for logins and notes for backup codes,
-                instructions, or anything you need to revisit quickly.
-              </p>
-            </div>
-          ) : null}
         </div>
       </div>
     </aside>
