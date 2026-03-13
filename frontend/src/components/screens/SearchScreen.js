@@ -4,13 +4,13 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../navbar/Sidebar";
 import Loader from "../Loader";
-import Button from "../Button";
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   DocumentTextIcon,
   FingerPrintIcon,
   HomeIcon,
+  PaperClipIcon,
 } from "@heroicons/react/outline";
 import algoliasearch from "algoliasearch";
 import {
@@ -24,6 +24,7 @@ import { usePasswordsQuery } from "../../hooks/usePasswords";
 import useDesktopSidebarState from "../../hooks/useDesktopSidebarState";
 import {
   AppBackdrop,
+  AppClosingAction,
   AppDashedEmptyState,
   AppMetaNote,
   AppPanel,
@@ -191,12 +192,9 @@ const SearchScreen = () => {
                     />
                   </div>
 
-                  <div className='order-2 min-w-0 basis-full 2xl:flex-1'>
-                    <p className='mb-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500'>
-                      Search The Vault
-                    </p>
+                  <div className='order-2 min-w-0 basis-full self-center 2xl:flex-1'>
                     <div
-                      className='rounded-[1.5rem] bg-slate-100/90 px-4 py-2'
+                      className='rounded-[1.5rem] bg-slate-100/90 px-4 py-2.5'
                       style={appSearchFieldStyle}>
                       <SearchBox
                         className='vault-search'
@@ -273,10 +271,25 @@ const SearchScreen = () => {
                     </Index>
                   </div>
                 </AppPanel>
+
+                <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
+                  <AppClosingAction
+                    eyebrow='Keep The Vault Current'
+                    title='Did not find the item you expected? Save it now.'
+                    description='If a password or secure note is missing from these results, add it directly so the next search finds it immediately.'
+                    primaryTo='/passwords/add'
+                    primaryState={{ backgroundLocation: location }}
+                    primaryIcon={FingerPrintIcon}
+                    primaryLabel='Add Password'
+                    secondaryTo='/add/note'
+                    secondaryState={{ backgroundLocation: location }}
+                    secondaryIcon={PaperClipIcon}
+                    secondaryLabel='Add Note'
+                  />
+                </AppPanel>
               </div>
             </main>
           </InstantSearch>
-          <Button />
         </div>
       </div>
     </div>

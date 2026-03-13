@@ -63,6 +63,9 @@ export const appActionIconButtonClassName =
 export const appPrimaryLinkClassName =
   "inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2";
 
+export const appSecondaryLinkClassName =
+  "inline-flex items-center justify-center gap-2 rounded-full bg-white/90 px-5 py-3 text-sm font-semibold text-slate-700 ring-1 ring-slate-200 transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300";
+
 export const actionHoverClassNames = {
   neutral: "hover:bg-slate-100 hover:text-slate-950 hover:ring-slate-200",
   open: "hover:bg-sky-50 hover:text-sky-700 hover:ring-sky-200",
@@ -136,6 +139,38 @@ export const AppPrimaryLink = ({
     {children}
   </Link>
 );
+
+export const AppSecondaryLink = ({
+  to,
+  state,
+  children,
+  className = "",
+  tone = "default",
+}) => {
+  const heroTone = tone === "hero";
+
+  return (
+    <Link
+      to={to}
+      state={state}
+      className={classNames(
+        heroTone
+          ? "inline-flex items-center justify-center gap-2 rounded-full bg-white/10 px-5 py-3 text-sm font-semibold text-white ring-1 ring-white/14 transition duration-200 hover:-translate-y-0.5 hover:bg-white/[0.14] focus:outline-none focus:ring-2 focus:ring-amber-300"
+          : appSecondaryLinkClassName,
+        className
+      )}
+      style={
+        heroTone
+          ? {
+              boxShadow:
+                "inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 26px rgba(15, 23, 42, 0.14)",
+            }
+          : appActionButtonStyle
+      }>
+      {children}
+    </Link>
+  );
+};
 
 export const AppEmptyState = ({
   eyebrow,
@@ -220,4 +255,48 @@ export const AppMetaNote = ({ children, className = "" }) => (
     )}>
     {children}
   </p>
+);
+
+export const AppClosingAction = ({
+  eyebrow,
+  title,
+  description,
+  primaryTo,
+  primaryState,
+  primaryIcon: PrimaryIcon,
+  primaryLabel,
+  secondaryTo,
+  secondaryState,
+  secondaryIcon: SecondaryIcon,
+  secondaryLabel,
+}) => (
+  <div className='flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between'>
+    <div className='max-w-2xl space-y-3'>
+      <p className='text-[11px] font-semibold uppercase tracking-[0.32em] text-amber-700'>
+        {eyebrow}
+      </p>
+      <div className='space-y-2'>
+        <h2 className='text-2xl font-semibold tracking-tight text-slate-950 sm:text-[2rem]'>
+          {title}
+        </h2>
+        <p className='text-sm leading-6 text-slate-600'>{description}</p>
+      </div>
+    </div>
+    <div className='flex flex-wrap items-center gap-3'>
+      {primaryTo ? (
+        <AppPrimaryLink to={primaryTo} state={primaryState}>
+          {PrimaryIcon ? <PrimaryIcon className='h-5 w-5' aria-hidden='true' /> : null}
+          {primaryLabel}
+        </AppPrimaryLink>
+      ) : null}
+      {secondaryTo ? (
+        <AppSecondaryLink to={secondaryTo} state={secondaryState}>
+          {SecondaryIcon ? (
+            <SecondaryIcon className='h-5 w-5' aria-hidden='true' />
+          ) : null}
+          {secondaryLabel}
+        </AppSecondaryLink>
+      ) : null}
+    </div>
+  </div>
 );

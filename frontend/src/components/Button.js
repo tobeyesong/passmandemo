@@ -34,7 +34,7 @@ const Button = () => {
   const location = useLocation();
 
   return (
-    <Popover className='fixed bottom-6 right-6 z-30'>
+    <Popover className='fixed bottom-6 right-6 z-[35]'>
       {({ open }) => (
         <>
           <Popover.Button
@@ -54,7 +54,7 @@ const Button = () => {
             leave='transition ease-in duration-150'
             leaveFrom='opacity-100 translate-y-0'
             leaveTo='opacity-0 translate-y-2'>
-            <Popover.Panel className='absolute bottom-20 right-0 w-80'>
+            <Popover.Panel className='absolute bottom-20 right-0 z-[35] w-80'>
               <AppPanel className='p-3'>
                 <div className='px-3 pb-3 pt-2'>
                   <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-700'>

@@ -17,7 +17,7 @@ const NoteState = () => {
       actionTo='/add/note'
       actionState={{ backgroundLocation: location }}
       actionIcon={PaperClipIcon}
-      actionLabel='Create Note'
+      actionLabel='Add Note'
     />
   );
 };

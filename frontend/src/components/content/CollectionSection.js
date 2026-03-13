@@ -9,6 +9,7 @@ const CollectionSection = ({
   description,
   count,
   action,
+  footer,
   children,
 }) => (
   <section className='px-4 pb-8 sm:px-6 lg:px-8'>
@@ -21,6 +22,9 @@ const CollectionSection = ({
         action={action}
       />
       <div className='mt-8'>{children}</div>
+      {footer ? (
+        <div className='mt-8 border-t border-slate-200/80 pt-8'>{footer}</div>
+      ) : null}
     </AppPanel>
   </section>
 );

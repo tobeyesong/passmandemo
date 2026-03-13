@@ -17,7 +17,7 @@ const PasswordState = () => {
       actionTo='/passwords/add'
       actionState={{ backgroundLocation: location }}
       actionIcon={FingerPrintIcon}
-      actionLabel='Create Password'
+      actionLabel='Add Password'
     />
   );
 };

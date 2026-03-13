@@ -13,7 +13,6 @@ import {
 } from "@heroicons/react/outline";
 import { Dialog, Transition } from "@headlessui/react";
 import { SearchIcon } from "@heroicons/react/solid";
-import Button from "../Button";
 import DensityToggle from "../app/DensityToggle";
 import {
   appActionButtonStyle,
@@ -38,6 +37,7 @@ const SearchBar = ({
   onSidebarToggle = () => {},
   density = "comfortable",
   onDensityChange = () => {},
+  hero = false,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
@@ -56,8 +56,31 @@ const SearchBar = ({
     return match?.name || "Workspace";
   })();
 
+  const topBarStyle = hero
+    ? {
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        boxShadow:
+          "inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.04), 0 18px 44px rgba(15, 23, 42, 0.14)",
+      }
+    : appTopBarStyle;
+
+  const actionSurfaceStyle = hero
+    ? {
+        boxShadow:
+          "inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 12px 26px rgba(15, 23, 42, 0.16)",
+      }
+    : appActionButtonStyle;
+
+  const searchSurfaceStyle = hero
+    ? {
+        boxShadow:
+          "inset 0 0 0 1px rgba(255, 255, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.06)",
+      }
+    : appSearchFieldStyle;
+
   return (
-    <div className='relative z-20'>
+    <div className='relative'>
       <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog
           as='div'
@@ -163,23 +186,37 @@ const SearchBar = ({
         </Dialog>
       </Transition.Root>
 
-      <div className='px-4 pt-4 sm:px-6 lg:px-8'>
+      <div className={hero ? "" : "px-4 pt-4 sm:px-6 lg:px-8"}>
         <div
-          className='rounded-[1.85rem] bg-white/70 px-3 py-3 ring-1 ring-white/70'
-          style={appTopBarStyle}>
+          className={classNames(
+            "rounded-[1.85rem] px-3 py-3",
+            hero
+              ? "bg-white/10 ring-1 ring-white/[0.12]"
+              : "bg-white/70 ring-1 ring-white/70"
+          )}
+          style={topBarStyle}>
           <div className='flex flex-wrap items-center gap-3 2xl:flex-nowrap'>
             <div className='order-1 flex flex-wrap items-center gap-3'>
               <button
                 type='button'
-                className='inline-flex h-11 w-11 items-center justify-center rounded-[1rem] bg-slate-900 text-white shadow-[0_12px_24px_rgba(15,23,42,0.16)] focus:outline-none focus:ring-2 focus:ring-amber-300 md:hidden'
+                className={classNames(
+                  "inline-flex h-11 w-11 items-center justify-center rounded-[1rem] text-white focus:outline-none focus:ring-2 focus:ring-amber-300 md:hidden",
+                  hero ? "bg-white/10 ring-1 ring-white/10" : "bg-slate-900"
+                )}
+                style={hero ? actionSurfaceStyle : undefined}
                 onClick={() => setSidebarOpen(true)}>
                 <span className='sr-only'>Open sidebar</span>
                 <MenuAlt2Icon className='h-5 w-5' aria-hidden='true' />
               </button>
               <button
                 type='button'
-                className='hidden h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex'
-                style={appActionButtonStyle}
+                className={classNames(
+                  "hidden h-11 w-11 items-center justify-center rounded-[1rem] focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex",
+                  hero
+                    ? "bg-white/10 text-white ring-1 ring-white/10 hover:bg-white/[0.14]"
+                    : "bg-white text-slate-600"
+                )}
+                style={actionSurfaceStyle}
                 onClick={onSidebarToggle}>
                 <span className='sr-only'>
                   {isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -191,10 +228,18 @@ const SearchBar = ({
                 )}
               </button>
               <div className='hidden min-w-0 sm:block'>
-                <p className='text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500'>
+                <p
+                  className={classNames(
+                  "text-[11px] font-semibold uppercase tracking-[0.24em]",
+                    hero ? "text-white/[0.62]" : "text-slate-500"
+                  )}>
                   Workspace
                 </p>
-                <p className='mt-1 truncate text-sm font-semibold text-slate-950'>
+                <p
+                  className={classNames(
+                    "mt-1 truncate text-sm font-semibold",
+                    hero ? "text-white" : "text-slate-950"
+                  )}>
                   {currentLabel}
                 </p>
               </div>
@@ -204,40 +249,57 @@ const SearchBar = ({
               to='/search'
               className='order-3 min-w-0 basis-full 2xl:order-2 2xl:flex-1'>
               <div
-                className='flex items-center gap-3 rounded-[1.5rem] bg-slate-100/90 px-4 py-3 text-left transition duration-200 hover:bg-white'
-                style={appSearchFieldStyle}>
+                className={classNames(
+                  "flex items-center gap-3 rounded-[1.5rem] px-4 py-3 text-left transition duration-200",
+                  hero
+                    ? "bg-white/[0.08] text-white hover:bg-white/[0.12]"
+                    : "bg-slate-100/90 hover:bg-white"
+                )}
+                style={searchSurfaceStyle}>
                 <div
-                  className='flex h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-amber-600'
-                  style={appActionButtonStyle}>
+                  className={classNames(
+                    "flex h-11 w-11 items-center justify-center rounded-[1rem]",
+                    hero ? "bg-white/10 text-white" : "bg-white text-amber-600"
+                  )}
+                  style={actionSurfaceStyle}>
                   <SearchIcon className='h-5 w-5' aria-hidden='true' />
                 </div>
                 <div className='min-w-0'>
-                  <p className='text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500'>
+                  <p
+                    className={classNames(
+                      "text-[11px] font-semibold uppercase tracking-[0.24em]",
+                      hero ? "text-white/[0.62]" : "text-slate-500"
+                    )}>
                     Search The Vault
                   </p>
-                  <p className='truncate text-sm text-slate-700'>
+                  <p
+                    className={classNames(
+                      "truncate text-sm",
+                      hero ? "text-white/[0.84]" : "text-slate-700"
+                    )}>
                     Passwords, notes, domains, and stored context
                   </p>
                 </div>
               </div>
             </Link>
 
-            <div
-              className='order-2 ml-auto hidden items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 2xl:order-3 2xl:inline-flex'
-              style={appSearchFieldStyle}>
-              <span className='h-2 w-2 rounded-full bg-emerald-400' />
-              {currentLabel}
-            </div>
+            {!hero ? (
+              <div
+                className='order-2 ml-auto hidden items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 2xl:order-3 2xl:inline-flex'
+                style={appSearchFieldStyle}>
+                <span className='h-2 w-2 rounded-full bg-emerald-400' />
+                {currentLabel}
+              </div>
+            ) : null}
             <DensityToggle
               density={density}
               onChange={onDensityChange}
+              tone={hero ? "hero" : "default"}
               className='order-2 ml-auto self-start 2xl:order-4 2xl:ml-0 2xl:self-auto'
             />
           </div>
         </div>
       </div>
-
-      <Button />
     </div>
   );
 };

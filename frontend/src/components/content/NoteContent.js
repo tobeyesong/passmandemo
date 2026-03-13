@@ -5,6 +5,7 @@ import { PaperClipIcon } from "@heroicons/react/outline";
 import { useLocation } from "react-router-dom";
 import NoteState from "../emptyState/noteState";
 import {
+  AppClosingAction,
   AppDashedEmptyState,
   AppEmptyState,
   AppLoader,
@@ -55,6 +56,11 @@ const NoteContent = ({
   title,
   density = "comfortable",
   showControls = false,
+  showAction = true,
+  embedded = false,
+  maxItems,
+  sectionAction,
+  showFooterAction,
 }) => {
   const location = useLocation();
   const { data: notes = [], isLoading, error } = useNotesQuery();
@@ -63,6 +69,7 @@ const NoteContent = ({
   const [sortValue, setSortValue] = useState("recent");
   const deferredSearch = useDeferredValue(searchTerm.trim().toLowerCase());
   const compact = density === "compact";
+  const shouldShowFooterAction = showFooterAction ?? !embedded;
 
   const filteredNotes = useMemo(() => {
     const nextNotes = [...notes]
@@ -109,70 +116,106 @@ const NoteContent = ({
     </AppPrimaryLink>
   );
 
+  const visibleNotes =
+    typeof maxItems === "number" && maxItems > 0
+      ? filteredNotes.slice(0, maxItems)
+      : filteredNotes;
+
+  const isPreviewTruncated = visibleNotes.length < filteredNotes.length;
+
+  const content = (
+    <CollectionSection
+      eyebrow='Vault Feature'
+      title={title}
+      description='Keep secure instructions and reference text readable at a glance, with clear titles and a quick preview of the note body.'
+      count={notes.length}
+      action={sectionAction ?? (showAction ? action : null)}
+      footer={
+        shouldShowFooterAction && !isLoading && !error && notes.length > 0 ? (
+          <AppClosingAction
+            eyebrow='Keep The Vault Current'
+            title='Add the next secure note before you move on'
+            description='Save the recovery steps, backup codes, and reference text you will want to reopen quickly later.'
+            primaryTo='/add/note'
+            primaryState={{ backgroundLocation: location }}
+            primaryIcon={PaperClipIcon}
+            primaryLabel='Add Note'
+            secondaryTo='/search'
+            secondaryLabel='Search Vault'
+          />
+        ) : null
+      }>
+      {isLoading ? (
+        <AppLoader label='Loading notes' />
+      ) : error ? (
+        <AppEmptyState
+          eyebrow='Load Error'
+          icon={PaperClipIcon}
+          title='Notes could not be loaded'
+          description={error.message}
+        />
+      ) : notes.length === 0 ? (
+        <NoteState />
+      ) : (
+        <React.Fragment>
+          {showControls ? (
+            <CollectionControls
+              searchValue={searchTerm}
+              onSearchChange={setSearchTerm}
+              searchPlaceholder='Search note titles or body text'
+              filterValue={filterValue}
+              onFilterChange={setFilterValue}
+              filterOptions={filterOptions}
+              sortValue={sortValue}
+              onSortChange={setSortValue}
+              sortOptions={sortOptions}
+              summary={`Showing ${filteredNotes.length} of ${notes.length}`}
+            />
+          ) : null}
+          {isPreviewTruncated ? (
+            <p className='mt-2 text-xs leading-6 text-slate-500'>
+              Showing the latest {visibleNotes.length} entries here. Open the
+              notes view for the full collection.
+            </p>
+          ) : null}
+
+          {filteredNotes.length === 0 ? (
+            <AppDashedEmptyState
+              icon={PaperClipIcon}
+              title='No notes match the current view'
+              description='Try clearing the search, changing the filter, or switching to a broader sort to bring more notes back into view.'
+              className='mt-6'
+            />
+          ) : (
+            <ul
+              className={`mt-6 grid grid-cols-1 ${
+                compact
+                  ? "gap-3 xl:grid-cols-2 2xl:grid-cols-3"
+                  : "gap-5 lg:grid-cols-2 2xl:grid-cols-3"
+              }`}>
+              {visibleNotes.map((note) => (
+                <li key={note._id}>
+                  <NoteCard
+                    note={note}
+                    backgroundLocation={location}
+                    compact={compact}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </React.Fragment>
+      )}
+    </CollectionSection>
+  );
+
+  if (embedded) {
+    return <div className='relative'>{content}</div>;
+  }
+
   return (
     <main className='relative flex-1 overflow-auto pb-8 pt-6 focus:outline-none'>
-      <CollectionSection
-        eyebrow='Vault Feature'
-        title={title}
-        description='Keep secure instructions and reference text readable at a glance, with clear titles and a quick preview of the note body.'
-        count={notes.length}
-        action={action}>
-        {isLoading ? (
-          <AppLoader label='Loading notes' />
-        ) : error ? (
-          <AppEmptyState
-            eyebrow='Load Error'
-            icon={PaperClipIcon}
-            title='Notes could not be loaded'
-            description={error.message}
-          />
-        ) : notes.length === 0 ? (
-          <NoteState />
-        ) : (
-          <React.Fragment>
-            {showControls ? (
-              <CollectionControls
-                searchValue={searchTerm}
-                onSearchChange={setSearchTerm}
-                searchPlaceholder='Search note titles or body text'
-                filterValue={filterValue}
-                onFilterChange={setFilterValue}
-                filterOptions={filterOptions}
-                sortValue={sortValue}
-                onSortChange={setSortValue}
-                sortOptions={sortOptions}
-                summary={`Showing ${filteredNotes.length} of ${notes.length}`}
-              />
-            ) : null}
-
-            {filteredNotes.length === 0 ? (
-              <AppDashedEmptyState
-                icon={PaperClipIcon}
-                title='No notes match the current view'
-                description='Try clearing the search, changing the filter, or switching to a broader sort to bring more notes back into view.'
-                className='mt-6'
-              />
-            ) : (
-              <ul
-                className={`mt-6 grid grid-cols-1 ${
-                  compact
-                    ? "gap-3 xl:grid-cols-2 2xl:grid-cols-3"
-                    : "gap-5 lg:grid-cols-2 2xl:grid-cols-3"
-                }`}>
-                {filteredNotes.map((note) => (
-                  <li key={note._id}>
-                    <NoteCard
-                      note={note}
-                      backgroundLocation={location}
-                      compact={compact}
-                    />
-                  </li>
-                ))}
-              </ul>
-            )}
-          </React.Fragment>
-        )}
-      </CollectionSection>
+      {content}
     </main>
   );
 };
