@@ -1,6 +1,7 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Transition } from "@headlessui/react";
 import {
   HomeIcon,
   FingerPrintIcon,
@@ -22,8 +23,25 @@ const navigation = [
   { name: "Notes", href: "/notes", icon: PaperClipIcon },
 ];
 
+const LABEL_REVEAL_DELAY_MS = 180;
+
 const Sidebar = ({ isCollapsed = false }) => {
   const { pathname } = useLocation();
+  const [showExpandedLabels, setShowExpandedLabels] = useState(!isCollapsed);
+  const shouldRenderExpandedLabels = !isCollapsed && showExpandedLabels;
+
+  useEffect(() => {
+    if (isCollapsed) {
+      setShowExpandedLabels(false);
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setShowExpandedLabels(true);
+    }, LABEL_REVEAL_DELAY_MS);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [isCollapsed]);
 
   const isActive = (href) =>
     href === "/"
@@ -59,19 +77,26 @@ const Sidebar = ({ isCollapsed = false }) => {
               />
             </div>
             <div
-              aria-hidden={isCollapsed}
               className={classNames(
-                "min-w-0 overflow-hidden transition-all duration-300 ease-out",
-                isCollapsed
-                  ? "max-w-0 translate-x-2 opacity-0"
-                  : "max-w-[11rem] translate-x-0 opacity-100 delay-75"
+                "min-w-0 overflow-hidden transition-[max-width] duration-300 ease-out",
+                isCollapsed ? "max-w-0" : "max-w-[11rem]"
               )}>
-              <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200'>
-                Secure Vault
-              </p>
-              <p className='mt-1 truncate text-lg font-semibold text-white'>
-                PassMan
-              </p>
+              <Transition
+                as='div'
+                show={shouldRenderExpandedLabels}
+                enter='transform-gpu transition duration-220 ease-out'
+                enterFrom='translate-x-2 opacity-0'
+                enterTo='translate-x-0 opacity-100'
+                leave='transition-none duration-0'
+                leaveFrom='translate-x-0 opacity-100'
+                leaveTo='translate-x-0 opacity-0'>
+                <p className='text-[11px] font-semibold uppercase tracking-[0.3em] text-amber-200'>
+                  Secure Vault
+                </p>
+                <p className='mt-1 truncate text-lg font-semibold text-white'>
+                  PassMan
+                </p>
+              </Transition>
             </div>
           </div>
         </div>
@@ -105,13 +130,26 @@ const Sidebar = ({ isCollapsed = false }) => {
                     )}>
                     <item.icon className='h-5 w-5' aria-hidden='true' />
                   </span>
-                  {!isCollapsed ? (
-                    <div className='min-w-0'>
+                  <div
+                    className={classNames(
+                      "min-w-0 overflow-hidden transition-[max-width] duration-300 ease-out",
+                      isCollapsed ? "max-w-0" : "max-w-[10rem]"
+                    )}>
+                    <Transition
+                      as='div'
+                      show={shouldRenderExpandedLabels}
+                      enter='transform-gpu transition duration-220 ease-out'
+                      enterFrom='translate-x-2 opacity-0'
+                      enterTo='translate-x-0 opacity-100'
+                      leave='transition-none duration-0'
+                      leaveFrom='translate-x-0 opacity-100'
+                      leaveTo='translate-x-0 opacity-0'>
                       <span className='block truncate'>{item.name}</span>
-                    </div>
-                  ) : (
+                    </Transition>
+                  </div>
+                  {isCollapsed ? (
                     <span className='sr-only'>{item.name}</span>
-                  )}
+                  ) : null}
                 </NavLink>
               );
             })}
