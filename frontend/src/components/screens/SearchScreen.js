@@ -30,9 +30,9 @@ import {
   AppPanel,
   AppSectionHeader,
   appActionButtonStyle,
+  appInsetStyle,
   appPageStyle,
   appSearchFieldStyle,
-  appTopBarStyle,
 } from "../app/appTheme";
 import DensityToggle from "../app/DensityToggle";
 import PasswordCard from "../content/PasswordCard";
@@ -148,53 +148,67 @@ const SearchScreen = () => {
         <Sidebar isCollapsed={isSidebarCollapsed} />
         <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>
           <InstantSearch indexName='passwordDemo' searchClient={searchClient}>
-            <div className='px-4 pt-4 sm:px-6 lg:px-8'>
-              <div
-                className='rounded-[1.85rem] bg-white/70 px-3 py-3 ring-1 ring-white/70'
-                style={appTopBarStyle}>
-                <div className='flex flex-wrap items-center gap-3 2xl:flex-nowrap'>
-                  <div className='order-1 flex w-full flex-wrap items-center gap-3 sm:w-auto'>
-                    <button
-                      type='button'
-                      className='hidden h-11 w-11 items-center justify-center rounded-[1rem] bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex'
-                      style={appActionButtonStyle}
-                      onClick={() =>
-                        setSidebarCollapsed((current) => !current)
-                      }>
-                      <span className='sr-only'>
-                        {isSidebarCollapsed
-                          ? "Expand sidebar"
-                          : "Collapse sidebar"}
-                      </span>
-                      {isSidebarCollapsed ? (
-                        <ChevronDoubleRightIcon
-                          className='h-5 w-5'
-                          aria-hidden='true'
-                        />
-                      ) : (
-                        <ChevronDoubleLeftIcon
-                          className='h-5 w-5'
-                          aria-hidden='true'
-                        />
-                      )}
-                    </button>
-                    <Link
-                      to='/'
-                      className='inline-flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-[1rem] bg-white px-4 text-sm font-semibold text-slate-700 transition duration-200 hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300 sm:flex-none'
-                      style={appActionButtonStyle}>
-                      <HomeIcon className='h-5 w-5' aria-hidden='true' />
-                      <span className='truncate'>Dashboard</span>
-                    </Link>
-                    <DensityToggle
-                      density={density}
-                      onChange={setDensity}
-                      className='ml-auto flex-shrink-0 sm:ml-0'
-                    />
-                  </div>
+            <main className='flex-1 overflow-auto pb-8 pt-6 focus:outline-none'>
+              <div className='grid min-w-0 gap-6 px-4 sm:px-6 lg:px-8'>
+                <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
+                  <div className='flex flex-col gap-6'>
+                    <div className='flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between'>
+                      <div className='min-w-0 max-w-2xl'>
+                        <p className='text-[11px] font-semibold uppercase tracking-[0.32em] text-amber-700'>
+                          Search The Vault
+                        </p>
+                        <h1 className='mt-3 text-3xl font-semibold tracking-tight text-slate-950'>
+                          Find passwords first, with notes right behind them.
+                        </h1>
+                        <p className='mt-3 text-sm leading-6 text-slate-600'>
+                          Search passwords, notes, and domains from one place,
+                          then act on the matching credential without leaving
+                          the page.
+                        </p>
+                      </div>
 
-                  <div className='order-2 min-w-0 basis-full self-center 2xl:flex-1'>
+                      <div className='flex flex-wrap items-center gap-2 lg:flex-shrink-0 lg:justify-end'>
+                        <button
+                          type='button'
+                          className='hidden h-10 w-10 items-center justify-center rounded-full bg-white text-slate-600 focus:outline-none focus:ring-2 focus:ring-amber-300 md:inline-flex'
+                          style={appActionButtonStyle}
+                          onClick={() =>
+                            setSidebarCollapsed((current) => !current)
+                          }>
+                          <span className='sr-only'>
+                            {isSidebarCollapsed
+                              ? "Expand sidebar"
+                              : "Collapse sidebar"}
+                          </span>
+                          {isSidebarCollapsed ? (
+                            <ChevronDoubleRightIcon
+                              className='h-5 w-5'
+                              aria-hidden='true'
+                            />
+                          ) : (
+                            <ChevronDoubleLeftIcon
+                              className='h-5 w-5'
+                              aria-hidden='true'
+                            />
+                          )}
+                        </button>
+                        <Link
+                          to='/'
+                          className='inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-full bg-slate-100/90 px-4 text-sm font-medium text-slate-600 transition duration-200 hover:bg-white hover:text-slate-950 focus:outline-none focus:ring-2 focus:ring-amber-300'
+                          style={appActionButtonStyle}>
+                          <HomeIcon className='h-5 w-5' aria-hidden='true' />
+                          <span className='truncate'>Dashboard</span>
+                        </Link>
+                        <DensityToggle
+                          density={density}
+                          onChange={setDensity}
+                          className='ml-auto flex-shrink-0 sm:ml-0'
+                        />
+                      </div>
+                    </div>
+
                     <div
-                      className='rounded-[1.5rem] bg-slate-100/90 px-4 py-2.5'
+                      className='rounded-[1.75rem] bg-slate-100/90 px-4 py-3'
                       style={appSearchFieldStyle}>
                       <SearchBox
                         className='vault-search'
@@ -205,23 +219,32 @@ const SearchScreen = () => {
                         }}
                       />
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <main className='flex-1 overflow-auto pb-8 pt-6 focus:outline-none'>
-              <div className='grid min-w-0 gap-6 px-4 sm:px-6 lg:px-8'>
-                <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
-                  <AppSectionHeader
-                    eyebrow='Search Results'
-                    title='Passwords'
-                    description='Matching credentials appear here as you type.'
-                  />
-                  <AppMetaNote className='mt-4'>
-                    Site logos use logo.dev when available. If a logo is
-                    missing, the vault falls back to the site initial.
-                  </AppMetaNote>
+                    <div
+                      className='flex flex-wrap items-center gap-3 rounded-[1.5rem] bg-slate-50/90 px-4 py-3 text-sm text-slate-600'
+                      style={appInsetStyle}>
+                      <span className='inline-flex items-center rounded-full bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500'>
+                        Primary Results
+                      </span>
+                      <span className='leading-6'>
+                        Matching credentials appear first so the fastest path
+                        back into an account stays front and center.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className='mt-8 border-t border-slate-200/80 pt-8'>
+                    <AppSectionHeader
+                      eyebrow='Passwords'
+                      title='Matching Credentials'
+                      description='Open, edit, or delete the most relevant credential directly from the results below.'
+                    />
+                    <AppMetaNote className='mt-4'>
+                      Site logos use logo.dev when available. If a logo is
+                      missing, the vault falls back to the site initial.
+                    </AppMetaNote>
+                  </div>
+
                   <div className='mt-8'>
                     <Index indexName='passwordDemo'>
                       <SearchHits
@@ -244,11 +267,11 @@ const SearchScreen = () => {
                   </div>
                 </AppPanel>
 
-                <AppPanel className='px-6 py-6 sm:px-8 sm:py-8'>
+                <AppPanel className='bg-slate-50/70 px-6 py-6 ring-slate-200/60 sm:px-8 sm:py-8'>
                   <AppSectionHeader
-                    eyebrow='Search Results'
+                    eyebrow='Supporting Results'
                     title='Notes'
-                    description='Matching secure notes appear here as you type.'
+                    description='Matching secure notes follow the credential results so related instructions stay nearby without competing for attention.'
                   />
                   <div className='mt-8'>
                     <Index indexName='noteDemo'>
